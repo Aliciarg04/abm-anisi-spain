@@ -1,0 +1,127 @@
+\begin{thebibliography}{19}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anisi(1987)]{anisi1987tiempo}
+David Anisi.
+\newblock \emph{Tiempo y t{\'e}cnica: Trabajo intra y extramercado,
+  desocupaci{\'o}n voluntaria y frustraci{\'o}n del consumo: una estructura
+  anal{\'i}tica para el cambio t{\'e}cnico}.
+\newblock Alianza Universidad. Alianza Editorial, Madrid, 1987.
+\newblock ISBN 84-206-2517-5.
+\newblock Capítulo 21: Definición de los índices $I_1$, $I_2$, $I_3$.
+
+\bibitem[Anisi(1988)]{anisi1988}
+David Anisi.
+\newblock \emph{Modelos económicos: Una introducción desde el análisis
+  gráfico}.
+\newblock Alianza Editorial, Madrid, 1988.
+
+\bibitem[Anisi(1995)]{anisi1995creadores}
+David Anisi.
+\newblock \emph{Creadores de escasez: Del bienestar al miedo}.
+\newblock Alianza Editorial, Madrid, 1995.
+
+\bibitem[Axelrod(1997)]{axelrod1997}
+Robert Axelrod.
+\newblock \emph{The Complexity of Cooperation: Agent-Based Models of
+  Competition and Collaboration}.
+\newblock Princeton University Press, 1997.
+
+\bibitem[Bonabeau(2002)]{bonabeau2002}
+Eric Bonabeau.
+\newblock Agent-based modeling: Methods and techniques for simulating human
+  systems.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 99\penalty0
+  (suppl 3):\penalty0 7280--7287, 2002.
+
+\bibitem[Casella and Berger(2002)]{casella2002statistical}
+George Casella and Roger~L. Berger.
+\newblock \emph{Statistical Inference}.
+\newblock Duxbury / Thomson Learning, Pacific Grove, CA, 2 edition, 2002.
+\newblock Referencia para métodos Monte Carlo utilizados en la calibración.
+
+\bibitem[de~Administraci{\'o}n~Tributaria(2025)]{agenciatributaria2024}
+Agencia~Estatal de~Administraci{\'o}n~Tributaria.
+\newblock Informe anual de recaudaci{\'o}n tributaria 2024.
+\newblock \url{https://www.agenciatributaria.es}, 2025.
+\newblock Presión fiscal efectiva: aproximadamente 30\%.
+
+\bibitem[de~Espa{\~n}a(2024)]{bdeHogares2024}
+Banco de~Espa{\~n}a.
+\newblock Informe sobre la situaci{\'o}n financiera de los hogares y las
+  empresas, 2024.
+\newblock \url{https://www.bde.es}, 2024.
+\newblock Propensión marginal al consumo de los hogares españoles.
+
+\bibitem[de~Estad{\'i}stica(2024{\natexlab{a}})]{ineEPA2024}
+Instituto~Nacional de~Estad{\'i}stica.
+\newblock Encuesta de poblaci{\'o}n activa (epa). resultados de 2024.
+\newblock \url{https://www.ine.es}, 2024{\natexlab{a}}.
+\newblock Tasa de paro: 11.4\% (media anual 2024).
+
+\bibitem[de~Estad{\'i}stica(2024{\natexlab{b}})]{ineEPF2024}
+Instituto~Nacional de~Estad{\'i}stica.
+\newblock Encuesta de presupuestos familiares (epf). resultados 2024.
+\newblock \url{https://www.ine.es}, 2024{\natexlab{b}}.
+\newblock Gasto de los hogares y estructura del consumo en España.
+
+\bibitem[de~Estad{\'i}stica(2024{\natexlab{c}})]{ineSalario2024}
+Instituto~Nacional de~Estad{\'i}stica.
+\newblock Estad{\'i}sticas de salarios. serie de salarios medios en espa{\~n}a.
+\newblock \url{https://www.ine.es}, 2024{\natexlab{c}}.
+\newblock Salario medio por hora: 17.5 euros/hora.
+
+\bibitem[de~Hacienda~y Función~Pública(2024)]{pge2024}
+Ministerio de~Hacienda~y Función~Pública.
+\newblock Presupuestos generales del estado 2024.
+\newblock \url{https://www.sepg.pap.hacienda.gob.es}, 2024.
+\newblock Créditos iniciales de gasto de las Administraciones Públicas.
+
+\bibitem[Dosi et~al.(2010)Dosi, Fagiolo, and Roventini]{dosi2010}
+Giovanni Dosi, Giorgio Fagiolo, and Andrea Roventini.
+\newblock Schumpeter meeting keynes: A policy-friendly model of endogenous
+  growth and business cycles.
+\newblock \emph{Journal of Economic Dynamics and Control}, 34\penalty0
+  (9):\penalty0 1748--1767, 2010.
+
+\bibitem[Epstein and Axtell(1996)]{epstein1996}
+Joshua~M. Epstein and Robert Axtell.
+\newblock \emph{Growing Artificial Societies: Social Science from the Bottom
+  Up}.
+\newblock MIT Press, 1996.
+
+\bibitem[Eurostat(2025)]{eurostatProd2024}
+Eurostat.
+\newblock Labour productivity and labour cost statistics: Spain, 2024.
+\newblock \url{https://ec.europa.eu/eurostat}, 2025.
+\newblock Productividad del trabajo: 68.0 euros/hora.
+
+\bibitem[Farmer and Foley(2009)]{farmer2009}
+J.~Doyne Farmer and Duncan Foley.
+\newblock The economy needs agent-based modelling.
+\newblock \emph{Nature}, 460\penalty0 (7256):\penalty0 685--686, 2009.
+
+\bibitem[Kazil et~al.(2020)Kazil, Masad, and Crooks]{kazil2020mesa}
+Jackie Kazil, David Masad, and Andrew Crooks.
+\newblock Utilizing python for agent-based modeling: The {Mesa} framework.
+\newblock In \emph{Social Simulation Conference}, 2020.
+
+\bibitem[{Project Mesa Team}(2024)]{mesa2024}
+{Project Mesa Team}.
+\newblock Mesa: Agent-based modeling in python 3+, 2024.
+\newblock URL \url{https://github.com/projectmesa/mesa}.
+\newblock Versión 3.x utilizada en este trabajo.
+
+\bibitem[Tesfatsion(2006)]{tesfatsion2006agent}
+Leigh Tesfatsion.
+\newblock Agent-based computational economics: A constructive approach to
+  economic theory.
+\newblock In Kenneth~L. Judd, L{\'e}onid Kogan, et~al., editors, \emph{Handbook
+  of Computational Economics}, volume~2 of \emph{Handbooks in Economics}, pages
+  831--880. Elsevier, 2006.
+
+\end{thebibliography}

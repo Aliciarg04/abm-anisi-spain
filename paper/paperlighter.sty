@@ -1,0 +1,258 @@
+% Edited from File: icml2022.sty (LaTeX style file for ICML-2022, version of 2022-11-23)
+% Modified by Yu Pan 2/13/2022: changed icml2022 as a new template
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{paperlighter}[2022/2/13 v0.1.2 A simple Latex style-file for writing papers]
+
+\RequirePackage{times}
+\RequirePackage{fancyhdr}
+\RequirePackage{xcolor}
+\RequirePackage{algorithm}
+\RequirePackage{algorithmic}
+\RequirePackage{natbib}
+\RequirePackage{eso-pic}
+\RequirePackage{forloop}
+\RequirePackage{url}
+
+\RequirePackage{hyperref}
+\definecolor{mydarkblue}{rgb}{0,0.08,0.45}
+\hypersetup{ %
+pdftitle={},
+pdfauthor={},
+pdfsubject={Modelo ABM de Anisi - España 2024},
+pdfkeywords={ABM, Mercado Laboral, Anisi, Mesa},
+pdfborder=0 0 0,
+pdfpagemode=UseNone,
+colorlinks=true,
+linkcolor=mydarkblue,
+citecolor=mydarkblue,
+filecolor=mydarkblue,
+urlcolor=mydarkblue,
+}
+
+\ProcessOptions\relax
+
+\newcommand{\yrcite}[1]{\citeyearpar{#1}}
+\renewcommand{\cite}[1]{\citep{#1}}
+
+\paperwidth=8.5in
+\paperheight=11in
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+\else
+   \ifx\pdfoutput\relax
+   \else
+     \ifcase\pdfoutput
+     \else
+       \pdftrue
+     \fi
+   \fi
+\fi
+
+\ifpdf
+  \setlength{\pdfpagewidth}{8.5in}
+  \setlength{\pdfpageheight}{11in}
+\fi
+
+\evensidemargin -0.23in
+\oddsidemargin -0.23in
+\setlength\textheight{9.0in}
+\setlength\textwidth{6.75in}
+\setlength\columnsep{0.25in}
+\setlength\headheight{10pt}
+\setlength\headsep{10pt}
+\addtolength{\topmargin}{-20pt}
+\addtolength{\topmargin}{-0.29in}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead{}
+\fancyfoot{}
+
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\baselinestretch}{1.2}
+
+\setlength{\headheight}{11.0pt}
+
+\thispagestyle{plain}
+
+\long\def\slimtitle#1{
+    \fancyhead[CE]{\textit{#1}}
+}
+\long\def\slimauthor#1{
+    \fancyhead[CO]{\textit{#1}}
+}
+
+\long\def\lightertitle#1{
+  {\baselineskip 25pt \bf{\fontsize{20}{30} \selectfont {#1}}\vskip .08in}
+}
+
+\long\def\lighterauthor#1{
+  \vskip .05in
+  {\hspace{1pt} \bf{\fontsize{12}{20}\selectfont #1}
+
+    \vskip .12in
+    {\hrule height1pt \vskip .12in}
+    
+    \vskip -.48in}
+}
+
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+\newcommand{\lighteraddress}[2]{%
+    \blfootnote{\hspace*{-6.0mm}#1\,#2.}
+}
+
+\long\def\lighteremail#1{
+    \blfootnote{\hspace*{-4.0mm}Email: \texttt{#1}.}
+}
+
+\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+
+\renewenvironment{abstract}
+{
+\vspace{-0.1in}
+\begingroup
+\baselineskip 14pt
+\addtolength\leftmargini{-0.24in}
+\begin{quote}
+{\large\bf Abstract.}}
+{\par\end{quote}
+    \endgroup
+}
+
+\def\@startsection#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
+   \par \@tempskipa #4\relax
+   \@afterindenttrue
+   \ifdim \@tempskipa <\z@ \@tempskipa -\@tempskipa \fi
+   \if@nobreak \everypar{}\else
+     \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
+     {\@ssect{#3}{#4}{#5}{#6}}{\@dblarg{\@sict{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+\def\@sict#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname}\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec.~}{\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname\hskip 0.4em }\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\thesection {\arabic{section}}
+\def\thesubsection {\thesection.\arabic{subsection}}
+\def\section{\@startsection{section}{1}{\z@}{-0.12in}{0.02in}
+             {\large\bf\raggedright}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-0.10in}{0.01in}
+                {\normalsize\bf\raggedright}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-0.08in}{0.01in}
+                {\normalsize\sc\raggedright}}
+\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\def\subparagraph{\@startsection{subparagraph}{5}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+
+\footnotesep 6.65pt
+\skip\footins 9pt
+\def\footnoterule{\kern-3pt \hrule width 0.8in \kern 2.6pt }
+\setcounter{footnote}{0}
+
+\parindent 0pt
+\topsep 4pt plus 1pt minus 2pt
+\partopsep 1pt plus 0.5pt minus 0.5pt
+\itemsep 2pt plus 1pt minus 0.5pt
+\parsep 2pt plus 1pt minus 0.5pt
+\parskip 6pt
+
+\leftmargin 2em \leftmargini\leftmargin \leftmarginii 2em
+\leftmarginiii 1.5em \leftmarginiv 1.0em \leftmarginv .5em
+\leftmarginvi .5em
+\labelwidth\leftmargini\advance\labelwidth-\labelsep \labelsep 5pt
+
+\def\@listi{\leftmargin\leftmargini}
+\def\@listii{\leftmargin\leftmarginii
+   \labelwidth\leftmarginii\advance\labelwidth-\labelsep
+   \topsep 2pt plus 1pt minus 0.5pt
+   \parsep 1pt plus 0.5pt minus 0.5pt
+   \itemsep \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+    \labelwidth\leftmarginiii\advance\labelwidth-\labelsep
+    \topsep 1pt plus 0.5pt minus 0.5pt
+    \parsep \z@ \partopsep 0.5pt plus 0pt minus 0.5pt
+    \itemsep \topsep}
+\def\@listiv{\leftmargin\leftmarginiv
+     \labelwidth\leftmarginiv\advance\labelwidth-\labelsep}
+\def\@listv{\leftmargin\leftmarginv
+     \labelwidth\leftmarginv\advance\labelwidth-\labelsep}
+\def\@listvi{\leftmargin\leftmarginvi
+     \labelwidth\leftmarginvi\advance\labelwidth-\labelsep}
+
+\abovedisplayskip 7pt plus2pt minus5pt
+\belowdisplayskip \abovedisplayskip
+\abovedisplayshortskip  0pt plus3pt
+\belowdisplayshortskip  4pt plus3pt minus3pt
+
+\def\@normalsize{\@setsize\normalsize{11pt}\xpt\@xpt}
+\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
+\def\footnotesize{\@setsize\footnotesize{10pt}\ixpt\@ixpt}
+\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
+\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
+\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
+\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
+\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
+\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
+\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+
+\newsavebox\newcaptionbox\newdimen\newcaptionboxwid
+
+\long\def\@makecaption#1#2{
+ \vskip 10pt
+        \baselineskip 11pt
+        \setbox\@tempboxa\hbox{#1. #2}
+        \ifdim \wd\@tempboxa >\hsize
+        \sbox{\newcaptionbox}{\small\sl #1.~}
+        \newcaptionboxwid=\wd\newcaptionbox
+        \usebox\newcaptionbox {\footnotesize #2}
+        \else
+          \centerline{{\small\sl #1.} {\small #2}}
+        \fi}
+
+\def\fnum@figure{Figure \thefigure}
+\def\fnum@table{Table \thetable}
+
+\endinput

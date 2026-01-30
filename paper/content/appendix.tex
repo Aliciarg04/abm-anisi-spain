@@ -1,0 +1,264 @@
+\section{Apéndice A: Código Fuente}
+
+El modelo ABM está implementado en Python utilizando la librería Mesa 3.x. A continuación se presenta el código principal de los agentes y el modelo.
+
+\subsection{Clase AdminPublica}
+
+\begin{verbatim}
+class AdminPublica(mesa.Agent):
+    """
+    Representa al Estado.
+    Fija las reglas del juego macroeconómico.
+    """
+    def __init__(self, unique_id, model, G_a, t, j):
+        super().__init__(model)
+        self.unique_id = unique_id
+        self.G_a = G_a  # Gasto Público Autónomo (€)
+        self.t = t      # Tipo Impositivo (30%)
+        self.j = j      # Jornada Anual (1700 horas)
+
+    def step(self):
+        pass
+\end{verbatim}
+
+
+\subsection{Clase Empresa}
+
+\begin{verbatim}
+class Empresa(mesa.Agent):
+    """
+    Produce bienes y contrata trabajadores.
+    Productividad z ~ N(68.0, 5.0) €/hora
+    Salario w ~ N(17.5, 2.0) €/hora
+    """
+    def __init__(self, unique_id, model, 
+                 z_media, z_std, w_media, w_std):
+        super().__init__(model)
+        self.unique_id = unique_id
+        
+        # Productividad y Salario
+        self.z = np.random.normal(z_media, z_std)
+        w_provisional = np.random.normal(w_media, w_std)
+        # Restricción: w < z (beneficio positivo)
+        self.w = max(1.0, min(w_provisional, self.z - 1.0))
+        
+        self.trabajadores_contratados = 0
+        self.demanda_trabajo = 0
+
+    def calcular_demanda(self, G_a_total, num_empresas):
+        """
+        Demanda de trabajo según ecuación de Anisi:
+        L_d = (G_a / n) / (z - w)
+        """
+        G_a_individual = G_a_total / num_empresas
+        if self.z > self.w:
+            self.demanda_trabajo = G_a_individual / (self.z - self.w)
+        else:
+            self.demanda_trabajo = 0
+
+    def step(self):
+        pass
+\end{verbatim}
+
+
+\subsection{Clase Trabajador}
+
+\begin{verbatim}
+class Trabajador(mesa.Agent):
+    """
+    Ofrece trabajo de mercado y doméstico.
+    z_b ~ N(5.57, 2.0) €/hora (calibrado)
+    c ~ N(5.63, 0.05) €/hora (calibrado)
+    """
+    def __init__(self, unique_id, model, 
+                 zb_media, zb_std, c_media, c_std):
+        super().__init__(model)
+        self.unique_id = unique_id
+        self.empleador = None
+        self.salario_percibido = 0
+        self.horas_mercado = 0
+        self.L_s = 0
+        
+        # Parámetros estocásticos
+        self.z_b = max(0.1, np.random.normal(zb_media, zb_std))
+        self.c = max(0.1, np.random.normal(c_media, c_std))
+        
+        # Tecnología de consumo (Anisi)
+        self.x = np.random.uniform(15.0, 25.0)
+        self.l = np.random.uniform(0.8, 1.2)
+        
+        self.L_b = 0          # Trabajo doméstico
+        self.L_w_total = 0    # Trabajo total
+        self.L_wp = 0         # Tiempo potencial
+
+    def step(self):
+        # 1. Ingresos de Mercado
+        if self.empleador is not None:
+            w_real = self.empleador.w
+            self.horas_mercado = self.model.admin_publica.j
+        else:
+            w_real = 0
+            self.horas_mercado = 0
+        
+        renta_bruta = w_real * self.horas_mercado
+        C_mercado = renta_bruta * (1 - self.model.admin_publica.t)
+        self.salario_percibido = C_mercado
+        
+        # 2. Consumo deseado
+        C_deseado = self.c * self.model.T_i_total
+        
+        # 3. Oferta nocional (L^s)
+        w_ref = w_real if w_real > 0 else self.model.w_promedio
+        self.L_s = C_deseado / w_ref if w_ref > 0 else 0
+        
+        # 4. Trabajo doméstico compensatorio
+        deficit = C_deseado - C_mercado
+        self.L_b = deficit / self.z_b if deficit > 0 else 0
+        
+        # 5. Tiempos totales (Anisi)
+        self.L_w_total = self.horas_mercado + self.L_b
+        tiempo_consumo = self.c * (self.l / self.x)
+        self.L_wp = max(0, self.model.T_i_total * (1 - tiempo_consumo))
+\end{verbatim}
+
+
+\subsection{Modelo Principal con Ciclos Económicos}
+
+\begin{verbatim}
+class ModeloAnisi(mesa.Model):
+    """
+    Modelo ABM calibrado para España 2024.
+    Incluye shocks económicos controlados.
+    
+    Comportamiento Keynesiano:
+    - G_a ALTO → Más demanda → Más empleo → MENOS paro
+    - G_a BAJO → Menos demanda → Menos empleo → MÁS paro
+    """
+    def __init__(self, 
+                 G_a=74092715,    # Calibrado
+                 t=0.30,          # 30% presión fiscal
+                 j=1700.0,        # Jornada anual
+                 z_media=68.0, z_std=5.0,
+                 w_media=17.5, w_std=2.0,
+                 zb_media=5.57, zb_std=2.0,  # Calibrado
+                 c_media=5.6290, c_std=0.05, # Calibrado
+                 N_trabajadores=1000, N_empresas=50,
+                 T_i_total=4800.0):
+        super().__init__()
+        self.T_i_total = T_i_total
+        self.N = N_trabajadores
+        
+        # Guardar valores BASE (del slider)
+        self.G_a_base = G_a
+        self.z_base_empresas = []
+        self.w_base_empresas = []
+        
+        # Crear agentes...
+        
+    def step(self):
+        # 1. SHOCK AL GASTO PÚBLICO (±5% del base)
+        shock_ga = np.random.normal(1.0, 0.05)
+        self.admin_publica.G_a = self.G_a_base * shock_ga
+        
+        # 2. SHOCKS A PRODUCTIVIDAD (±3%) Y SALARIOS (±2%)
+        for i, empresa in enumerate(self.empresas):
+            shock_z = np.random.normal(1.0, 0.03)
+            empresa.z = self.z_base_empresas[i] * shock_z
+            shock_w = np.random.normal(1.0, 0.02)
+            empresa.w = max(5.0, min(
+                self.w_base_empresas[i] * shock_w, 
+                empresa.z - 1))
+        
+        # 3. Asignación laboral y cálculo de índices...
+\end{verbatim}
+
+
+\section{Apéndice B: Instrucciones de Uso}
+
+\subsection{Requisitos}
+
+\begin{itemize}
+    \item Python 3.10 o superior
+    \item Librerías: \texttt{mesa>=3.0}, \texttt{numpy}, \texttt{mesa-viz-tornado}
+\end{itemize}
+
+\subsection{Instalación}
+
+\begin{verbatim}
+pip install mesa numpy mesa-viz-tornado
+\end{verbatim}
+
+\subsection{Ejecución de la Calibración}
+
+\begin{verbatim}
+cd Seminario
+python calibracion_definitiva.py
+\end{verbatim}
+
+Ejecuta 2,000 iteraciones Monte Carlo y muestra los parámetros óptimos.
+
+\subsection{Ejecución de la Visualización Web}
+
+\begin{verbatim}
+cd Seminario
+python run_web.py
+\end{verbatim}
+
+Abrir navegador en: \texttt{http://localhost:8521/}
+
+\subsection{Controles de la Interfaz}
+
+\begin{itemize}
+    \item \textbf{Sliders}: Modificar parámetros (G\_a desde 0 hasta 150M €)
+    \item \textbf{Reset}: Reiniciar con nuevos parámetros (OBLIGATORIO tras cambiar sliders)
+    \item \textbf{Start}: Inicia simulación continua
+    \item \textbf{Step}: Avanza un período
+\end{itemize}
+
+
+\section{Apéndice C: Parámetros del Modelo}
+
+\begin{table}[h]
+\centering
+\caption{Descripción completa de los parámetros calibrados}
+\begin{tabular}{lp{4cm}ccc}
+\toprule
+\textbf{Símbolo} & \textbf{Descripción} & \textbf{Rango Slider} & \textbf{Valor Calibrado} & \textbf{Fuente} \\
+\midrule
+$G_a$ & Gasto público autónomo & 0 - 150M € & 74,092,715 € & Monte Carlo \\
+$t$ & Tipo impositivo & 0.10 - 0.50 & 0.30 & Ag. Tributaria \\
+$j$ & Jornada anual & 1000 - 2200 h & 1,700 h & OCDE \\
+$z$ & Productividad media & 40 - 120 €/h & 68.0 €/h & Eurostat \\
+$w$ & Salario medio & 10 - 35 €/h & 17.5 €/h & INE \\
+$z_b$ & Productividad doméstica & 3 - 15 €/h & 5.57 €/h & Monte Carlo \\
+$c$ & Consumo deseado & 3 - 10 €/h & 5.63 €/h & Monte Carlo \\
+$N$ & Número trabajadores & 100 - 2000 & 1,000 & Escala \\
+$n$ & Número empresas & 10 - 200 & 50 & Escala \\
+$T$ & Tiempo total disponible & 2000 - 6000 h & 4,800 h & Anisi \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\section{Apéndice D: Resultados de Calibración}
+
+\begin{table}[h]
+\centering
+\caption{Resumen de resultados de calibración Monte Carlo (2000 iteraciones)}
+\begin{tabular}{lc}
+\toprule
+\textbf{Métrica} & \textbf{Valor} \\
+\midrule
+Iteraciones totales & 2,000 \\
+Tiempo de ejecución & $\sim$25 segundos \\
+Error Tasa de Paro & 4.95\% \\
+Error Índice $I_3$ & 2.66\% \\
+\textbf{Error Global} & \textbf{3.64\%} \\
+Validaciones realizadas & 50 \\
+\midrule
+$G_a$ óptimo & 74,092,715 € \\
+$c$ óptimo & 5.6290 €/h \\
+$z_b$ óptimo & 5.57 €/h \\
+\bottomrule
+\end{tabular}
+\end{table}

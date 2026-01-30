@@ -1,0 +1,191 @@
+\section{Resultados}
+
+\subsection{Resultados de la Calibración Monte Carlo}
+
+La optimización Monte Carlo con 2,000 iteraciones convergió exitosamente, encontrando parámetros óptimos con un error global del 3.64\%. La Figura \ref{fig:convergencia} muestra la evolución del mejor error durante el proceso de optimización.
+
+Los parámetros óptimos encontrados fueron:
+\begin{itemize}
+    \item $G_a^{opt} = 74{,}092{,}715$ euros
+    \item $c^{opt} = 5.6290$ euros/hora
+    \item $z_b^{opt} = 5.57$ euros/hora
+\end{itemize}
+
+\subsection{Validación de Robustez}
+
+La validación se realizó ejecutando 50 simulaciones independientes con los parámetros óptimos. Los resultados estadísticos se resumen en la Tabla \ref{tab:validacion}.
+
+\begin{table}[h]
+\centering
+\caption{Resultados de validación (50 simulaciones)}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Métrica} & \textbf{Target} & \textbf{Media} & \textbf{Std} & \textbf{Error \%} \\
+\midrule
+Tasa de Paro & 11.4\% & 11.96\% & 2.94\% & 4.95\% \\
+Índice $I_1$ (Colocación) & 1.00 & 0.959 & 0.035 & 4.08\% \\
+Índice $I_2$ (Dualismo) & 0.60 & 0.411 & 0.035 & 31.51\% \\
+Índice $I_3$ (Ocupación) & 1.10 & 1.071 & 0.072 & 2.66\% \\
+\bottomrule
+\end{tabular}
+\label{tab:validacion}
+\end{table}
+
+Los resultados muestran:
+\begin{itemize}
+    \item \textbf{Tasa de paro}: Error del 4.95\%, muy cercano al target de España 2024 (11.4\% según EPA).
+    \item \textbf{Índice $I_3$}: Error del 2.66\%, indicando que el modelo captura correctamente la frustración de consumo.
+    \item \textbf{Índice $I_1$}: Colocación del 95.9\%, sugiriendo que el mercado satisface la mayoría de los deseos de empleo.
+    \item \textbf{Índice $I_2$}: Mayor desviación (31.51\%), reflejando que el modelo predice más trabajo doméstico que el target teórico.
+\end{itemize}
+
+
+\subsection{Análisis Estructural}
+
+El análisis estructural del modelo calibrado revela características importantes de la economía simulada:
+
+\begin{itemize}
+    \item \textbf{PIB Oculto}: El trabajo doméstico representa aproximadamente el 11.54\% del valor económico total, capturando la ``economía invisible'' de los cuidados y el hogar.
+    
+    \item \textbf{Horas domésticas}: 2,434,518 horas totales de trabajo extramercado.
+    
+    \item \textbf{Valor doméstico}: 13,572,069 euros en producción no contabilizada en el PIB oficial.
+\end{itemize}
+
+
+\subsection{Comportamiento Keynesiano del Modelo}
+
+Una de las validaciones más importantes es verificar que el modelo exhibe comportamiento keynesiano coherente. La Tabla \ref{tab:keynesiano} muestra el impacto del gasto público en el desempleo:
+
+\begin{table}[h]
+\centering
+\caption{Impacto del gasto público en el empleo (comportamiento keynesiano)}
+\begin{tabular}{rcc}
+\toprule
+\textbf{$G_a$ (millones €)} & \textbf{Empleo} & \textbf{Tasa de Paro} \\
+\midrule
+0 & 0 & 100.0\% \\
+25 & 280 & 72.0\% \\
+50 & 524 & 47.6\% \\
+75 (calibrado) & 844 & 15.6\% \\
+100 & 1,000 & 0.0\% \\
+150 & 1,000 & 0.0\% \\
+\bottomrule
+\end{tabular}
+\label{tab:keynesiano}
+\end{table}
+
+El modelo reproduce el comportamiento esperado:
+\begin{itemize}
+    \item $G_a = 0$ genera colapso total del mercado laboral (100\% de paro)
+    \item Incrementos progresivos de $G_a$ reducen el desempleo
+    \item Con $G_a \geq 100M$ se alcanza el pleno empleo
+\end{itemize}
+
+
+\subsection{Análisis de Sensibilidad}
+
+\subsubsection{Impacto del Gasto Público}
+
+Un incremento del gasto público de 50M a 100M euros produce:
+\begin{itemize}
+    \item Reducción de la tasa de paro de 47.6\% a 0\%
+    \item Incremento del empleo de 524 a 1,000 trabajadores
+    \item Reducción del trabajo doméstico compensatorio
+\end{itemize}
+
+\subsubsection{Impacto de la Presión Fiscal}
+
+Un aumento del tipo impositivo del 30\% al 40\% genera:
+\begin{itemize}
+    \item Reducción del ingreso disponible de los trabajadores
+    \item Incremento del trabajo doméstico para compensar la pérdida de poder adquisitivo
+    \item Aumento del índice de frustración ($I_3$)
+\end{itemize}
+
+\subsubsection{Shocks Económicos}
+
+Los shocks estocásticos ($\pm 5\%$ en $G_a$, $\pm 3\%$ en productividad, $\pm 2\%$ en salarios) generan:
+\begin{itemize}
+    \item Variabilidad realista en las series temporales
+    \item Oscilaciones alrededor de los valores base (sin deriva acumulativa)
+    \item Comportamiento cíclico similar a economías reales
+\end{itemize}
+
+
+\subsection{Visualización Interactiva}
+
+La Figura \ref{fig:webapp} muestra una captura de la aplicación web en funcionamiento, donde se observan las gráficas dinámicas de los indicadores del mercado laboral.
+
+\begin{figure}[h]
+    \centering
+    % Primera fila: Imagen 1 e Imagen 2
+    \includegraphics[width=0.6\linewidth]{imagen.png} \hfill
+    \includegraphics[width=0.6\linewidth]{imagen2.png} \\
+    \vspace{0.5cm} % Espacio opcional entre filas
+
+    % Segunda fila: Imagen 3 e Imagen 4
+    \includegraphics[width=0.6\linewidth]{imagen3.png} \hfill
+    \includegraphics[width=0.6\linewidth]{imagen4.png} \\
+    \vspace{0.5cm}
+
+    % Tercera fila: Imagen 5 centrada
+    \includegraphics[width=0.6\linewidth]{imagen5.png}
+
+
+    \caption{Interfaz de visualización interactiva del modelo ABM. Se muestran los sliders de control (gasto público desde 0 hasta 150M €) y las gráficas de evolución temporal de la tasa de paro (rojo), empleo normalizado (verde), e índices $I_1$, $I_2$, $I_3$.}
+    \label{fig:webapp}
+\end{figure}
+
+
+\section{Discusión}
+
+\subsection{Contribuciones del Trabajo}
+
+Este trabajo realiza varias contribuciones significativas:
+
+\begin{enumerate}
+    \item \textbf{Implementación ABM moderna}: Primera implementación del modelo de Anisi utilizando Mesa 3.x con ciclos económicos realistas (shocks controlados que oscilan alrededor del valor base).
+    
+    \item \textbf{Calibración rigurosa}: Optimización Monte Carlo con 2,000 iteraciones y validación con 50 simulaciones, alcanzando un error global del 3.64\%.
+    
+    \item \textbf{Parámetros para España 2024}: Conjunto de parámetros ($G_a$, $c$, $z_b$) calibrados que reproducen la tasa de paro del 11.4\% y el índice $I_3 \approx 1.10$.
+    
+    \item \textbf{Herramienta de política}: Interfaz web que permite explorar el impacto de diferentes niveles de gasto público, desde el colapso económico ($G_a = 0$) hasta el pleno empleo ($G_a = 150M$).
+    
+    \item \textbf{Código abierto}: Implementación completa disponible y documentada.
+\end{enumerate}
+
+\subsection{Limitaciones}
+
+\begin{itemize}
+    \item \textbf{Índice $I_2$}: La mayor desviación (31.51\%) sugiere que la distribución entre trabajo formal y doméstico requiere calibración adicional.
+    
+    \item \textbf{Escala del modelo}: Con 1,000 agentes, el modelo captura dinámicas cualitativas pero no magnitudes absolutas.
+    
+    \item \textbf{Estructura estática}: No incorpora crecimiento económico ni dinámicas demográficas.
+\end{itemize}
+
+
+\section{Conclusiones}
+
+Este trabajo ha presentado una implementación computacional del modelo de Anisi utilizando técnicas de Modelización Basada en Agentes. Las principales conclusiones son:
+
+\begin{enumerate}
+    \item El modelo ABM captura adecuadamente las dinámicas keynesianas: mayor gasto público reduce el desempleo, con $G_a = 0$ generando 100\% de paro y $G_a = 100M$ alcanzando pleno empleo.
+    
+    \item La calibración Monte Carlo (2,000 iteraciones) produce parámetros que reproducen la tasa de paro española (error 4.95\%) y el índice $I_3$ (error 2.66\%), con un error global del 3.64\%.
+    
+    \item Los shocks económicos controlados ($\pm 5\%$ $G_a$, $\pm 3\%$ productividad, $\pm 2\%$ salarios) generan ciclos realistas sin deriva acumulativa.
+    
+    \item La interfaz web interactiva permite explorar escenarios de política económica, visualizando en tiempo real el impacto del gasto público en el mercado laboral.
+\end{enumerate}
+
+\subsection{Líneas Futuras de Investigación}
+
+\begin{itemize}
+    \item Calibración mejorada del índice $I_2$ (dualismo trabajo formal/doméstico)
+    \item Incorporación de múltiples sectores productivos
+    \item Extensión a dinámicas de largo plazo (crecimiento, cambio tecnológico)
+    \item Validación con datos de panel y comparación internacional
+\end{itemize}
