@@ -1,3 +1,29 @@
+% =============================================================================
+% BIBLIOGRAFÍA DEFINITIVA - Modelo ABM de Anisi (España 2024)
+% =============================================================================
+% ---------------------------------------------------------------------------
+% OBRAS DE DAVID ANISI
+% ---------------------------------------------------------------------------
+
+@book{anisi1987tiempo,
+  author    = {David Anisi},
+  title     = {Tiempo y t{\'e}cnica: Trabajo intra y extramercado, desocupaci{\'o}n voluntaria y frustraci{\'o}n del consumo: una estructura anal{\'i}tica para el cambio t{\'e}cnico},
+  year      = {1987},
+  publisher = {Alianza Editorial},
+  address   = {Madrid},
+  series    = {Alianza Universidad},
+  isbn      = {84-206-2517-5},
+  note      = {Obra fundamental que desarrolla el modelo de mercado laboral con trabajo dom{\'e}stico. Cap{\'i}tulo 21: Definici{\'o}n de los {\'i}ndices $I_1$, $I_2$, $I_3$}
+}
+
+@book{anisi1988,
+  author    = {Anisi, David},
+  title     = {Modelos econ{\'o}micos: Una introducci{\'o}n desde el an{\'a}lisis gr{\'a}fico},
+  publisher = {Alianza Editorial},
+  year      = {1988},
+  address   = {Madrid}
+}
+
 @book{anisi1995creadores,
   author    = {David Anisi},
   title     = {Creadores de escasez: Del bienestar al miedo},
@@ -7,65 +33,9 @@
   language  = {Spanish}
 }
 
-@misc{mesa2024,
-  author = {{Project Mesa Team}},
-  title  = {Mesa: Agent-based modeling in Python 3+},
-  year   = {2024},
-  url    = {https://github.com/projectmesa/mesa},
-  note   = {Versión 3.x utilizada en este trabajo}
-}
-
-@book{axelrod1997,
-  author    = {Axelrod, Robert},
-  title     = {The Complexity of Cooperation: Agent-Based Models of Competition and Collaboration},
-  publisher = {Princeton University Press},
-  year      = {1997}
-}
-
-@article{farmer2009,
-  author  = {Farmer, J. Doyne and Foley, Duncan},
-  title   = {The economy needs agent-based modelling},
-  journal = {Nature},
-  volume  = {460},
-  number  = {7256},
-  pages   = {685--686},
-  year    = {2009}
-}
-
-@book{epstein1996,
-  author    = {Epstein, Joshua M. and Axtell, Robert},
-  title     = {Growing Artificial Societies: Social Science from the Bottom Up},
-  publisher = {MIT Press},
-  year      = {1996}
-}
-
-@article{bonabeau2002,
-  author  = {Bonabeau, Eric},
-  title   = {Agent-based modeling: Methods and techniques for simulating human systems},
-  journal = {Proceedings of the National Academy of Sciences},
-  volume  = {99},
-  number  = {suppl 3},
-  pages   = {7280--7287},
-  year    = {2002}
-}
-
-@book{anisi1988,
-  author    = {Anisi, David},
-  title     = {Modelos económicos: Una introducción desde el análisis gráfico},
-  publisher = {Alianza Editorial},
-  year      = {1988},
-  address   = {Madrid}
-}
-
-@article{dosi2010,
-  author  = {Dosi, Giovanni and Fagiolo, Giorgio and Roventini, Andrea},
-  title   = {Schumpeter meeting Keynes: A policy-friendly model of endogenous growth and business cycles},
-  journal = {Journal of Economic Dynamics and Control},
-  volume  = {34},
-  number  = {9},
-  pages   = {1748--1767},
-  year    = {2010}
-}
+% ---------------------------------------------------------------------------
+% MODELIZACIÓN BASADA EN AGENTES (ABM) - REFERENCIAS FUNDAMENTALES
+% ---------------------------------------------------------------------------
 
 @incollection{tesfatsion2006agent,
   author    = {Leigh Tesfatsion},
@@ -76,90 +46,152 @@
   pages     = {831--880},
   year      = {2006},
   publisher = {Elsevier},
-  series    = {Handbooks in Economics}
+  series    = {Handbooks in Economics},
+  doi       = {10.1016/S1574-0021(05)02016-2},
+  note      = {Revisi{\'o}n completa de la metodolog{\'i}a ABM en econom{\'i}a}
 }
 
 @inproceedings{kazil2020mesa,
   author    = {Jackie Kazil and David Masad and Andrew Crooks},
   title     = {Utilizing Python for Agent-Based Modeling: The {Mesa} Framework},
-  booktitle = {Social Simulation Conference},
+  booktitle = {Social, Cultural, and Behavioral Modeling},
+  pages     = {308--317},
   year      = {2020},
-  language  = {English}
+  publisher = {Springer},
+  doi       = {10.1007/978-3-030-61255-9_30},
+  note      = {Art{\'i}culo original describiendo el framework Mesa}
 }
 
+@misc{mesa2024,
+  author       = {{Project Mesa Team}},
+  title        = {Mesa: Agent-based modeling in Python 3+},
+  year         = {2024},
+  url          = {https://github.com/projectmesa/mesa},
+  howpublished = {\url{https://mesa.readthedocs.io/}},
+  note         = {Versi{\'o}n 3.x utilizada en este trabajo. Documentaci{\'o}n oficial}
+}
+
+@book{axelrod1997,
+  author    = {Axelrod, Robert},
+  title     = {The Complexity of Cooperation: Agent-Based Models of Competition and Collaboration},
+  publisher = {Princeton University Press},
+  year      = {1997},
+  note      = {Art{\'i}culo seminal sobre simulaci{\'o}n en ciencias sociales}
+}
+
+@article{farmer2009,
+  author  = {Farmer, J. Doyne and Foley, Duncan},
+  title   = {The economy needs agent-based modelling},
+  journal = {Nature},
+  volume  = {460},
+  number  = {7256},
+  pages   = {685--686},
+  year    = {2009},
+  doi     = {10.1038/460685a}
+}
+
+@book{epstein1996,
+  author    = {Epstein, Joshua M. and Axtell, Robert},
+  title     = {Growing Artificial Societies: Social Science from the Bottom Up},
+  publisher = {MIT Press},
+  year      = {1996},
+  address   = {Cambridge, MA}
+}
+
+@article{bonabeau2002,
+  author  = {Bonabeau, Eric},
+  title   = {Agent-based modeling: Methods and techniques for simulating human systems},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {99},
+  number  = {suppl 3},
+  pages   = {7280--7287},
+  year    = {2002},
+  doi     = {10.1073/pnas.082080899},
+  note    = {Revisi{\'o}n de m{\'e}todos ABM para simulaci{\'o}n de sistemas humanos}
+}
+
+@article{dosi2010,
+  author  = {Dosi, Giovanni and Fagiolo, Giorgio and Roventini, Andrea},
+  title   = {Schumpeter meeting Keynes: A policy-friendly model of endogenous growth and business cycles},
+  journal = {Journal of Economic Dynamics and Control},
+  volume  = {34},
+  number  = {9},
+  pages   = {1748--1767},
+  year    = {2010},
+  doi     = {10.1016/j.jedc.2010.06.018},
+  note    = {Modelo ABM que integra crecimiento end{\'o}geno y ciclos econ{\'o}micos}
+}
+
+% ---------------------------------------------------------------------------
+% DATOS ESTADÍSTICOS - ESPAÑA 2024
+% ---------------------------------------------------------------------------
+
 @misc{ineEPA2024,
-  author       = {Instituto Nacional de Estad{\'i}stica},
+  author       = {{Instituto Nacional de Estad{\'i}stica}},
   title        = {Encuesta de Poblaci{\'o}n Activa (EPA). Resultados de 2024},
   year         = {2024},
-  howpublished = {\url{https://www.ine.es}},
-  note         = {Tasa de paro: 11.4\% (media anual 2024)},
+  howpublished = {\url{https://www.ine.es/prensa/epa_tabla.htm}},
+  note         = {Fuente oficial de la tasa de desempleo en Espa{\~n}a. Tasa de paro: 11.4\% (media anual 2024)},
   institution  = {INE}
 }
 
 @misc{ineSalario2024,
-  author       = {Instituto Nacional de Estad{\'i}stica},
-  title        = {Estad{\'i}sticas de salarios. Serie de salarios medios en Espa{\~n}a},
+  author       = {{Instituto Nacional de Estad{\'i}stica}},
+  title        = {Encuesta Anual de Coste Laboral (EACL) 2024},
   year         = {2024},
-  howpublished = {\url{https://www.ine.es}},
-  note         = {Salario medio por hora: 17.5 euros/hora},
+  howpublished = {\url{https://www.ine.es/dyngs/INEbase/es/operacion.htm?c=Estadistica_C&cid=1254736060920}},
+  note         = {Datos de salarios y costes laborales en Espa{\~n}a. Salario medio por hora: 17.5 euros/hora},
   institution  = {INE}
-}
-
-@misc{pge2024,
-  author       = {Ministerio de Hacienda y Función Pública},
-  title        = {Presupuestos Generales del Estado 2024},
-  year         = {2024},
-  howpublished = {\url{https://www.sepg.pap.hacienda.gob.es}},
-  note         = {Créditos iniciales de gasto de las Administraciones Públicas},
-  institution  = {Gobierno de España}
-}
-
-@misc{agenciatributaria2024,
-  author       = {Agencia Estatal de Administraci{\'o}n Tributaria},
-  title        = {Informe anual de recaudaci{\'o}n tributaria 2024},
-  year         = {2025},
-  howpublished = {\url{https://www.agenciatributaria.es}},
-  note         = {Presión fiscal efectiva: aproximadamente 30\%},
-  institution  = {Agencia Tributaria}
-}
-
-@misc{eurostatProd2024,
-  author       = {Eurostat},
-  title        = {Labour Productivity and Labour Cost Statistics: Spain, 2024},
-  year         = {2025},
-  howpublished = {\url{https://ec.europa.eu/eurostat}},
-  note         = {Productividad del trabajo: 68.0 euros/hora},
-  institution  = {Statistical Office of the European Union}
-}
-
-@misc{bdeHogares2024,
-  author       = {Banco de Espa{\~n}a},
-  title        = {Informe sobre la situaci{\'o}n financiera de los hogares y las empresas, 2024},
-  year         = {2024},
-  howpublished = {\url{https://www.bde.es}},
-  note         = {Propensión marginal al consumo de los hogares españoles},
-  institution  = {Banco de España}
 }
 
 @misc{ineEPF2024,
-  author       = {Instituto Nacional de Estad{\'i}stica},
+  author       = {{Instituto Nacional de Estad{\'i}stica}},
   title        = {Encuesta de Presupuestos Familiares (EPF). Resultados 2024},
   year         = {2024},
   howpublished = {\url{https://www.ine.es}},
-  note         = {Gasto de los hogares y estructura del consumo en España},
+  note         = {Gasto de los hogares y estructura del consumo en Espa{\~n}a},
   institution  = {INE}
 }
 
-@book{anisi1987tiempo,
-  author    = {David Anisi},
-  title     = {Tiempo y t{\'e}cnica: Trabajo intra y extramercado, desocupaci{\'o}n voluntaria y frustraci{\'o}n del consumo: una estructura anal{\'i}tica para el cambio t{\'e}cnico},
-  year      = {1987},
-  publisher = {Alianza Editorial},
-  address   = {Madrid},
-  series    = {Alianza Universidad},
-  isbn      = {84-206-2517-5},
-  note      = {Capítulo 21: Definición de los índices $I_1$, $I_2$, $I_3$}
+@misc{eurostatProd2024,
+  author       = {{Eurostat}},
+  title        = {Labour Productivity and Labour Cost Statistics: Spain, 2024},
+  year         = {2024},
+  howpublished = {\url{https://ec.europa.eu/eurostat/databrowser/view/nama_10_lp_ulc}},
+  note         = {Estad{\'i}sticas de productividad laboral en la UE. Productividad del trabajo: 68.0 euros/hora},
+  institution  = {Statistical Office of the European Union}
 }
+
+@misc{agenciatributaria2024,
+  author       = {{Agencia Estatal de Administraci{\'o}n Tributaria}},
+  title        = {Informe anual de recaudaci{\'o}n tributaria 2024},
+  year         = {2024},
+  howpublished = {\url{https://www.agenciatributaria.es}},
+  note         = {Datos de presi{\'o}n fiscal efectiva: aproximadamente 30\%},
+  institution  = {Agencia Tributaria}
+}
+
+@misc{pge2024,
+  author       = {{Ministerio de Hacienda y Funci{\'o}n P{\'u}blica}},
+  title        = {Presupuestos Generales del Estado 2024},
+  year         = {2024},
+  howpublished = {\url{https://www.sepg.pap.hacienda.gob.es}},
+  note         = {Cr{\'e}ditos iniciales de gasto de las Administraciones P{\'u}blicas},
+  institution  = {Gobierno de Espa{\~n}a}
+}
+
+@misc{bdeHogares2024,
+  author       = {{Banco de Espa{\~n}a}},
+  title        = {Informe sobre la situaci{\'o}n financiera de los hogares y las empresas, 2024},
+  year         = {2024},
+  howpublished = {\url{https://www.bde.es}},
+  note         = {Propensi{\'o}n marginal al consumo de los hogares espa{\~n}oles},
+  institution  = {Banco de Espa{\~n}a}
+}
+
+% ---------------------------------------------------------------------------
+% MÉTODOS ESTADÍSTICOS Y CALIBRACIÓN
+% ---------------------------------------------------------------------------
 
 @book{casella2002statistical,
   author    = {George Casella and Roger L. Berger},
@@ -168,5 +200,195 @@
   year      = {2002},
   publisher = {Duxbury / Thomson Learning},
   address   = {Pacific Grove, CA},
-  note      = {Referencia para métodos Monte Carlo utilizados en la calibración}
+  note      = {Referencia para m{\'e}todos Monte Carlo utilizados en la calibraci{\'o}n}
+}
+
+% ---------------------------------------------------------------------------
+% ABM EN MERCADOS LABORALES
+% ---------------------------------------------------------------------------
+
+@article{fagiolo2004,
+  author    = {Fagiolo, Giorgio and Dosi, Giovanni and Gabriele, Roberto},
+  title     = {Matching, bargaining, and wage setting in an evolutionary model of the labor market},
+  journal   = {Journal of Economic Interaction and Coordination},
+  volume    = {1},
+  number    = {2},
+  pages     = {167--192},
+  year      = {2004},
+  publisher = {Springer},
+  doi       = {10.1007/s11403-006-0009-z},
+  note      = {Modelo ABM pionero del mercado laboral}
+}
+
+@article{dawid2012eurace,
+  author  = {Dawid, Herbert and Gemkow, Simon and Harting, Philipp and van der Hoog, Sander and Neugart, Michael},
+  title   = {The EURACE@Unibi Model: An Agent-Based Macroeconomic Model for Economic Policy Analysis},
+  journal = {Bielefeld Working Papers in Economics and Management},
+  number  = {05-2012},
+  year    = {2012},
+  note    = {Modelo ABM a escala macroecon{\'o}mica para an{\'a}lisis de pol{\'i}ticas}
+}
+
+% ---------------------------------------------------------------------------
+% REFERENCIAS DE WEB OF SCIENCE
+% ---------------------------------------------------------------------------
+
+@article{yu2018evolutionary,
+  author    = {Yu, Jae-Min and Cho, Sung-Bae},
+  title     = {An evolutionary agent-based framework for modeling and analysis of labor market},
+  journal   = {Applied Soft Computing},
+  volume    = {64},
+  pages     = {527--545},
+  year      = {2018},
+  publisher = {Elsevier},
+  doi       = {10.1016/j.asoc.2017.12.041},
+  note      = {Modelo ABM del mercado laboral con enfoque de teor{\'i}a de juegos}
+}
+
+@inproceedings{ballot2016abm,
+  author    = {Ballot, Gerard and Kant, Jean-Daniel and Goudet, Olivier},
+  title     = {An Agent-Based Model of the French Labor Market, Applied to the Evaluation of Employment Policies},
+  booktitle = {Proceedings of the Social Simulation Conference 2016},
+  year      = {2016},
+  organization = {European Social Simulation Association},
+  note      = {Modelo ABM del mercado laboral franc{\'e}s para evaluaci{\'o}n de pol{\'i}ticas de empleo}
+}
+
+@article{scheuer2020technological,
+  author    = {Scheuer, Timon and Zilian, Stella},
+  title     = {Technological Change in an Unstable Labor Market: A Dynamic System Approach},
+  journal   = {Journal of Evolutionary Economics},
+  volume    = {30},
+  pages     = {1--30},
+  year      = {2020},
+  publisher = {Springer},
+  doi       = {10.1007/s00191-019-00631-6},
+  note      = {Din{\'a}micas de desequilibrio en mercados laborales inestables}
+}
+
+@article{donovan2023labor,
+  author    = {Donovan, Kevin and Lu, Will Jianyu and Schoellman, Todd},
+  title     = {Labor Market Dynamics and Development},
+  journal   = {Quarterly Journal of Economics},
+  volume    = {138},
+  number    = {4},
+  pages     = {2287--2325},
+  year      = {2023},
+  publisher = {Oxford University Press},
+  doi       = {10.1093/qje/qjad017},
+  note      = {Evidencia emp{\'i}rica sobre flujos laborales en 49 pa{\'i}ses}
+}
+
+@article{shananin2023group,
+  author    = {Shananin, Alexander and Trusov, Nikolai},
+  title     = {The group behaviour modelling of workers in the labor market},
+  journal   = {Mathematical Modelling of Natural Phenomena},
+  volume    = {18},
+  pages     = {1--25},
+  year      = {2023},
+  publisher = {EDP Sciences},
+  doi       = {10.1051/mmnp/2023010},
+  note      = {Modelizaci{\'o}n matem{\'a}tica del comportamiento grupal de trabajadores}
+}
+
+% ---------------------------------------------------------------------------
+% TRABAJO DOMÉSTICO Y ECONOMÍA FEMINISTA
+% ---------------------------------------------------------------------------
+
+@article{ironmonger1996counting,
+  author    = {Ironmonger, Duncan},
+  title     = {Counting outputs, capital inputs and caring labor: Estimating gross household product},
+  journal   = {Feminist Economics},
+  volume    = {2},
+  number    = {3},
+  pages     = {37--64},
+  year      = {1996},
+  publisher = {Taylor \& Francis},
+  doi       = {10.1080/13545709610001707756},
+  note      = {Metodolog{\'i}a para contabilizar producci{\'o}n dom{\'e}stica}
+}
+
+@article{himmelweit1995discovery,
+  author    = {Himmelweit, Susan},
+  title     = {The discovery of ``unpaid work'': the social consequences of the expansion of ``work''},
+  journal   = {Feminist Economics},
+  volume    = {1},
+  number    = {2},
+  pages     = {1--19},
+  year      = {1995},
+  publisher = {Taylor \& Francis},
+  doi       = {10.1080/714042233},
+  note      = {An{\'a}lisis feminista del trabajo no remunerado}
+}
+
+@article{folbre2000production,
+  author    = {Folbre, Nancy and Nelson, Julie A},
+  title     = {For Love or Money---Or Both?},
+  journal   = {Journal of Economic Perspectives},
+  volume    = {14},
+  number    = {4},
+  pages     = {123--140},
+  year      = {2000},
+  publisher = {American Economic Association},
+  note      = {Econom{\'i}a del trabajo reproductivo}
+}
+
+% ---------------------------------------------------------------------------
+% TEORÍA MACROECONÓMICA
+% ---------------------------------------------------------------------------
+
+@book{keynes1936general,
+  author    = {Keynes, John Maynard},
+  title     = {The General Theory of Employment, Interest and Money},
+  year      = {1936},
+  publisher = {Macmillan},
+  address   = {London},
+  note      = {Obra fundacional de la macroeconom{\'i}a keynesiana}
+}
+
+% ---------------------------------------------------------------------------
+% SIMULACIÓN EN CIENCIAS SOCIALES
+% ---------------------------------------------------------------------------
+
+@book{gilbert2005simulation,
+  author    = {Gilbert, Nigel and Troitzsch, Klaus G},
+  title     = {Simulation for the Social Scientist},
+  year      = {2005},
+  edition   = {2nd},
+  publisher = {Open University Press},
+  address   = {Maidenhead, UK},
+  note      = {Texto fundamental sobre simulaci{\'o}n en ciencias sociales}
+}
+
+@article{grimm2006standard,
+  author    = {Grimm, Volker and Berger, Uta and Bastiansen, Finn and others},
+  title     = {A standard protocol for describing individual-based and agent-based models},
+  journal   = {Ecological Modelling},
+  volume    = {198},
+  number    = {1-2},
+  pages     = {115--126},
+  year      = {2006},
+  publisher = {Elsevier},
+  doi       = {10.1016/j.ecolmodel.2006.04.023},
+  note      = {Protocolo ODD para documentaci{\'o}n de modelos ABM}
+}
+
+% ---------------------------------------------------------------------------
+% DATOS INTERNACIONALES
+% ---------------------------------------------------------------------------
+
+@misc{ocde2024hours,
+  author       = {{OECD}},
+  title        = {Hours worked per worker},
+  year         = {2024},
+  howpublished = {\url{https://data.oecd.org/emp/hours-worked.htm}},
+  note         = {Estad{\'i}sticas de jornada laboral en pa{\'i}ses OCDE. Espa{\~n}a: 1,700 horas/a{\~n}o}
+}
+
+@misc{eusilc2024,
+  author       = {{Eurostat}},
+  title        = {EU Statistics on Income and Living Conditions (EU-SILC)},
+  year         = {2024},
+  howpublished = {\url{https://ec.europa.eu/eurostat/web/microdata/eu-silc}},
+  note         = {Microdatos de condiciones de vida en la UE}
 }

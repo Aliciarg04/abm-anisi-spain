@@ -1,168 +1,276 @@
 \section{Introducción}
 
-El análisis del mercado laboral ha sido tradicionalmente abordado desde perspectivas macroeconómicas agregadas que, si bien proporcionan información valiosa sobre tendencias generales, frecuentemente omiten las complejidades derivadas de la heterogeneidad de los agentes económicos y sus interacciones. David Anisi, en su obra ``Tiempo y Técnica'' (1987), propuso un marco teórico innovador que integra el trabajo de mercado con el trabajo doméstico, ofreciendo una visión más completa de la realidad laboral \cite{anisi1987tiempo}.
+El análisis del mercado laboral ha sido tradicionalmente abordado desde perspectivas macroeconómicas agregadas que, si bien proporcionan métricas útiles para la formulación de políticas, omiten las complejidades derivadas de la heterogeneidad de los agentes económicos y sus interacciones dinámicas. El caso español resulta particularmente ilustrativo: con tasas de desempleo que históricamente han duplicado la media europea, el mercado laboral de España presenta características estructurales que desafían las explicaciones convencionales basadas en modelos de equilibrio.
 
-La Modelización Basada en Agentes (ABM, por sus siglas en inglés) emerge como una metodología particularmente adecuada para capturar estas dinámicas complejas. A diferencia de los modelos de equilibrio general, los ABM permiten representar agentes heterogéneos que interactúan de forma descentralizada, generando patrones macroeconómicos emergentes a partir de comportamientos microeconómicos \cite{tesfatsion2006agent}.
+\subsection{Contexto del Mercado Laboral Español}
 
-En este trabajo, presentamos una implementación computacional del modelo de Anisi utilizando técnicas ABM. Nuestros objetivos específicos son:
+España ha experimentado fluctuaciones dramáticas en su mercado laboral durante las últimas décadas. La crisis financiera de 2008 elevó la tasa de desempleo desde el 8\% hasta máximos del 27\% en 2013, afectando de manera desproporcionada a jóvenes y trabajadores con contratos temporales. Aunque la recuperación posterior redujo gradualmente estas cifras, el país mantiene un desempleo estructural significativamente superior al de sus socios europeos.
+
+En 2024, según datos del Instituto Nacional de Estadística (INE), la tasa de paro se situó en el 11.4\%, con una productividad media de 68 euros por hora trabajada y un salario medio neto de 17.5 euros por hora \cite{ineEPA2024, ineSalario2024, eurostatProd2024}. Estas cifras, aunque representan una mejora respecto a años anteriores, continúan reflejando desequilibrios persistentes entre oferta y demanda de trabajo.
+
+\subsection{El Modelo Teórico de Anisi}
+
+David Anisi (1944-2008), economista español formado en la Universidad del País Vasco y posteriormente catedrático en la Universidad de Salamanca, desarrolló en su obra ``Tiempo y Técnica'' (1987) un modelo innovador que integra el trabajo de mercado con el trabajo doméstico \cite{anisi1987tiempo}. Esta obra representa una contribución original a la economía laboral española, ofreciendo un marco teórico que permite analizar fenómenos frecuentemente ignorados en los análisis convencionales.
+
+A diferencia de los enfoques neoclásicos tradicionales que consideran únicamente el empleo formal remunerado, Anisi reconoce que los hogares pueden satisfacer sus necesidades de consumo mediante dos vías complementarias:
 
 \begin{enumerate}
-    \item Desarrollar un modelo ABM que capture fielmente las dinámicas descritas por Anisi, incluyendo la interacción entre trabajo de mercado y trabajo doméstico, implementado en Python con Mesa 3.x.
-    \item Calibrar el modelo para el caso específico de España utilizando datos macroeconómicos de 2024, mediante optimización Monte Carlo con 2000 iteraciones.
-    \item Crear una herramienta de visualización web interactiva que incorpore ciclos económicos realistas (shocks de gasto público, ajustes salariales y fluctuaciones de productividad).
+    \item \textbf{Trabajo de mercado ($L$)}: Empleo remunerado en el sector formal, sujeto a la disponibilidad de vacantes y las condiciones salariales. Este tipo de trabajo genera ingresos monetarios que permiten adquirir bienes y servicios en el mercado.
+    \item \textbf{Trabajo doméstico ($L_b$)}: Producción de bienes y servicios en el hogar (preparación de alimentos, limpieza, cuidado de familiares), que aunque no genera remuneración monetaria, produce valor económico real al satisfacer directamente necesidades de consumo.
 \end{enumerate}
 
-El resto del artículo se organiza de la siguiente manera: la Sección 2 describe la metodología empleada y la arquitectura del modelo; la Sección 3 presenta los resultados de las simulaciones y la calibración para España; y la Sección 4 concluye con las implicaciones de política y líneas futuras de investigación.
+Esta distinción es fundamental porque permite capturar fenómenos como el subempleo encubierto, donde trabajadores formalmente desempleados compensan su falta de ingresos mediante la intensificación del trabajo doméstico. En España, este fenómeno es particularmente relevante dado el persistente desempleo estructural y la importancia de las redes familiares como mecanismo de protección social.
+
+El modelo de Anisi parte de la idea de que el tiempo es el recurso fundamental que los individuos deben distribuir. Cada persona dispone de un tiempo total finito que debe repartir entre trabajar (en el mercado o en casa) y consumir los bienes producidos. Esta restricción temporal impone límites a las posibilidades de los individuos y genera tensiones cuando las necesidades de consumo son elevadas.
+
+\subsubsection{Los Tres Índices de Anisi}
+
+El modelo propone tres índices que caracterizan diferentes aspectos del mercado laboral y permiten diagnosticar la situación de los trabajadores:
+
+\textbf{Índice de Colocación ($I_1$):}
+\begin{equation}
+I_1 = \frac{L}{L^s}
+\end{equation}
+donde $L$ es el trabajo de mercado efectivamente realizado y $L^s$ es la oferta nocional (deseada) de trabajo. Este índice mide en qué grado los trabajadores consiguen emplearse tanto como desean. Un valor $I_1 = 1$ indica que todos los trabajadores están empleados exactamente las horas que desean. Un valor $I_1 < 1$ indica desempleo involuntario: los trabajadores desean trabajar más de lo que el mercado les permite, reflejando una situación de demanda insuficiente.
+
+\textbf{Índice de Dualismo ($I_2$):}
+\begin{equation}
+I_2 = \frac{L}{L + L_b}
+\end{equation}
+Este índice mide la proporción de trabajo formal sobre el trabajo total realizado. Valores altos (cercanos a 1) indican economías formalizadas donde la mayor parte del trabajo es remunerado. Valores bajos indican economías con alta dependencia del sector informal o doméstico, típico de situaciones de crisis o de países en desarrollo. En el contexto español, este índice permite cuantificar cuánto dependen los hogares del trabajo no remunerado para mantener su nivel de vida.
+
+\textbf{Índice de Ocupación o Frustración ($I_3$):}
+\begin{equation}
+I_3 = \frac{L + L_b}{L_w^p}
+\end{equation}
+donde $L_w^p$ es el tiempo potencial disponible para trabajar (descontando el tiempo necesario para consumir). Este índice es quizás el más revelador del modelo de Anisi. Valores $I_3 > 1$ indican lo que Anisi denomina ``frustración de consumo'': los individuos necesitarían dedicar más tiempo al trabajo del que físicamente disponen para satisfacer sus necesidades de consumo. Esta situación genera estrés, insatisfacción y puede indicar problemas estructurales en la economía.
+
+\subsection{Modelización Basada en Agentes}
+
+La Modelización Basada en Agentes (ABM, por sus siglas en inglés) constituye un paradigma computacional que representa sistemas complejos mediante la simulación de agentes autónomos que interactúan según reglas definidas \cite{tesfatsion2006agent, bonabeau2002}. A diferencia de los modelos de equilibrio general dinámico estocástico (DSGE) dominantes en la macroeconomía contemporánea, los ABM ofrecen ventajas significativas para el análisis de mercados laborales:
+
+\begin{itemize}
+    \item \textbf{Heterogeneidad}: Cada agente puede tener características únicas (productividad, preferencias, restricciones), capturando la diversidad real de los agentes económicos. Esto contrasta con los modelos de agente representativo que asumen homogeneidad.
+    \item \textbf{Interacciones locales}: Los agentes interactúan directamente sin necesidad de un mecanismo de coordinación centralizado como el subastador walrasiano ficticio.
+    \item \textbf{Emergencia}: Los patrones macroeconómicos emergen de las interacciones micro, sin ser impuestos exógenamente. El desempleo, por ejemplo, surge de fricciones de matching.
+    \item \textbf{Dinámica fuera de equilibrio}: El sistema puede exhibir comportamientos transitorios, histéresis y no converger necesariamente a un equilibrio único.
+    \item \textbf{Racionalidad limitada}: Los agentes pueden seguir reglas heurísticas simples en lugar de optimización perfecta con información completa.
+\end{itemize}
+
+\subsubsection{Revisión de Literatura ABM en Mercados Laborales}
+
+La aplicación de ABM al análisis de mercados laborales tiene una tradición consolidada. Los trabajos seminales de Epstein y Axtell (1996) con su modelo Sugarscape demostraron cómo patrones complejos de distribución de recursos pueden emerger de reglas simples de comportamiento \cite{epstein1996}.
+
+En el ámbito específico de mercados laborales, Fagiolo, Dosi y Gabriele (2004) desarrollaron un modelo ABM que captura la formación endógena de salarios mediante procesos de negociación descentralizada, reproduciendo distribuciones salariales realistas y desempleo persistente \cite{fagiolo2004}.
+
+El proyecto EURACE, liderado por Dawid y colaboradores, representa uno de los esfuerzos más ambiciosos en ABM macroeconómico, modelizando economías europeas completas con millones de agentes interactuando en múltiples mercados \cite{dawid2012eurace}. Sus resultados han sido utilizados para informar debates de política económica en la Unión Europea.
+
+La línea de investigación de Dosi, Fagiolo y Roventini ha producido modelos que integran dinámicas schumpeterianas de innovación con mecanismos keynesianos de demanda, demostrando cómo políticas fiscales pueden afectar simultáneamente el crecimiento y la estabilidad \cite{dosi2010}.
+
+En la última década, los ABM de mercados laborales han experimentado un desarrollo significativo. Yu y Cho (2018) propusieron un marco evolutivo que aplica teoría de juegos para modelar las interacciones estratégicas entre trabajadores y empresas, permitiendo analizar cómo emergen patrones de contratación y salarios de decisiones descentralizadas \cite{yu2018evolutionary}. Ballot, Kant y Goudet (2016) desarrollaron un modelo ABM del mercado laboral francés específicamente diseñado para evaluar políticas de empleo como el ``Contrato Generación'', demostrando tanto las posibilidades como las limitaciones de las intervenciones gubernamentales \cite{ballot2016abm}.
+
+Scheuer y Zilian (2020) abordaron el impacto del cambio tecnológico en mercados laborales inestables, mostrando caminos de desequilibrio que los modelos de equilibrio tradicionales no pueden capturar \cite{scheuer2020technological}. Desde una perspectiva empírica, Donovan, Lu y Schoellman (2023) construyeron un extenso conjunto de datos con microdatos de 49 países, documentando cómo las altas tasas de flujo laboral reflejan una ``escalera resbaladiza'' donde los trabajadores transitan frecuentemente hacia empleos marginales sin ascender \cite{donovan2023labor}. Complementariamente, Shananin y Trusov (2023) desarrollaron un enfoque matemático alternativo utilizando ecuaciones de Kolmogorov-Fokker-Planck para modelar el comportamiento grupal de trabajadores \cite{shananin2023group}.
+
+Más recientemente, la crisis financiera de 2008 y la pandemia de COVID-19 han renovado el interés en ABM como herramienta para analizar shocks sistémicos y evaluar respuestas de política, dado que los modelos tradicionales fallaron en anticipar estas crisis.
+
+\subsubsection{El Framework Mesa}
+
+Mesa es un framework de código abierto para ABM en Python, desarrollado por Project Mesa \cite{kazil2020mesa, mesa2024}. Sus principales características son:
+
+\begin{itemize}
+    \item \textbf{Modularidad}: Separación clara entre definición de agentes, modelo y visualización.
+    \item \textbf{Escalabilidad}: Capacidad para simular miles de agentes con rendimiento aceptable.
+    \item \textbf{Visualización integrada}: Herramientas para crear interfaces web interactivas.
+    \item \textbf{Recolección de datos}: Sistema integrado para registrar métricas durante la simulación.
+    \item \textbf{Compatibilidad}: Integración nativa con el ecosistema científico de Python (NumPy, Pandas, Matplotlib).
+\end{itemize}
+
+La versión 3.x de Mesa, utilizada en este trabajo, introduce mejoras significativas en la gestión de agentes y en las capacidades de visualización a través del módulo \texttt{mesa-viz-tornado}.
+
+Trabajos seminales como los de Epstein y Axtell (1996) y la línea de investigación de Dosi, Fagiolo y colaboradores han demostrado la utilidad de los ABM para capturar dinámicas macroeconómicas complejas \cite{epstein1996, dosi2010, fagiolo2004}.
+
+\subsection{Objetivos del Trabajo}
+
+Los objetivos de este trabajo son:
+
+\begin{enumerate}
+    \item Desarrollar una implementación ABM del modelo teórico de Anisi utilizando el framework Mesa 3.x en Python.
+    \item Calibrar el modelo para la economía española de 2024 mediante optimización Monte Carlo.
+    \item Validar la capacidad del modelo para reproducir la tasa de desempleo y los índices de Anisi.
+    \item Proporcionar una herramienta de visualización web interactiva para la exploración de políticas.
+\end{enumerate}
 
 
 \section{Metodología}
 
-\subsection{Marco Teórico: El Modelo de Anisi}
+Esta sección describe en detalle la metodología utilizada para construir, calibrar y validar el modelo ABM. El enfoque metodológico combina la formalización matemática del modelo teórico de Anisi con las técnicas computacionales propias de la modelización basada en agentes.
 
-El modelo de Anisi parte de una distinción fundamental entre dos formas de trabajo: el trabajo de mercado ($L$) y el trabajo extramercado o doméstico ($L_b$). Esta dualidad permite analizar no solo el empleo formal, sino también las estrategias de los hogares para satisfacer sus necesidades de consumo cuando el mercado laboral no les ofrece suficientes oportunidades \cite{anisi1987tiempo}.
+La elección de un enfoque ABM para implementar el modelo de Anisi responde a varias consideraciones. En primer lugar, el modelo original de Anisi contempla heterogeneidad entre trabajadores y empresas, lo cual es difícil de capturar en modelos agregados tradicionales. En segundo lugar, la dinámica del mercado laboral implica procesos de matching entre oferta y demanda que son inherentemente descentralizados. En tercer lugar, la interacción entre trabajo de mercado y trabajo doméstico genera comportamientos adaptativos que emergen de las decisiones individuales de los agentes.
 
-El modelo propone tres índices fundamentales para medir el estado del mercado laboral:
+El proceso metodológico sigue una secuencia ordenada. Primero, se formaliza el comportamiento de cada tipo de agente según las especificaciones teóricas de Anisi. Segundo, se implementan estos comportamientos en código Python utilizando el framework Mesa. Tercero, se calibran los parámetros libres del modelo mediante optimización Monte Carlo. Cuarto, se valida la robustez de los resultados mediante simulaciones repetidas. Finalmente, se desarrolla una interfaz de visualización para facilitar la exploración del modelo.
 
-\begin{itemize}
-    \item \textbf{Índice de Colocación ($I_1$)}: Mide la relación entre el trabajo efectivamente realizado en el mercado y la oferta nocional de trabajo. Formalmente: $I_1 = L / L^s$, donde $L^s$ representa las horas que los trabajadores desearían trabajar dado su nivel de consumo deseado.
-    
-    \item \textbf{Índice de Dualismo ($I_2$)}: Cuantifica la proporción del trabajo total que se realiza en el mercado formal frente al trabajo total (mercado más doméstico). Se define como: $I_2 = L / (L + L_b)$.
-    
-    \item \textbf{Índice de Ocupación/Frustración ($I_3$)}: Relaciona el trabajo total (mercado más doméstico) con el tiempo potencial disponible para trabajar: $I_3 = (L + L_b) / L_w^p$.
-\end{itemize}
+\subsection{Marco Teórico del Modelo}
 
+El modelo parte del siguiente marco conceptual. Cada individuo dispone de un tiempo total $T$ (típicamente 4,800 horas anuales, equivalentes a aproximadamente 13 horas diarias durante todos los días del año) que debe distribuir entre trabajo de mercado, trabajo doméstico y tiempo necesario para el consumo. Esta distribución del tiempo constituye el núcleo de las decisiones del trabajador en el modelo de Anisi.
+
+El supuesto de un tiempo total de 4,800 horas refleja el tiempo potencialmente productivo de un individuo adulto, descontando las horas de sueño y necesidades fisiológicas básicas. Este parámetro puede ajustarse para reflejar diferentes contextos culturales o demográficos.
+
+\subsubsection{Comportamiento del Trabajador}
+
+El consumo deseado por cada trabajador es proporcional al tiempo disponible:
+\begin{equation}
+C_{deseado} = c \cdot T
+\end{equation}
+donde $c$ representa la intensidad del deseo de consumo.
+
+La oferta nocional de trabajo (cuánto desearía trabajar el individuo) se deriva de este consumo deseado:
+\begin{equation}
+L^s = \frac{C_{deseado}}{w} = \frac{c \cdot T}{w}
+\end{equation}
+donde $w$ es el salario de referencia.
+
+Si el trabajador está empleado, recibe un ingreso de mercado:
+\begin{equation}
+C_{mercado} = w \cdot j \cdot (1 - t)
+\end{equation}
+donde $j$ es la jornada anual y $t$ el tipo impositivo.
+
+Cuando el consumo de mercado es insuficiente, el trabajador compensa con producción doméstica:
+\begin{equation}
+L_b = \frac{C_{deseado} - C_{mercado}}{z_b}
+\end{equation}
+donde $z_b$ es la productividad del trabajo doméstico.
+
+\subsubsection{Comportamiento de la Empresa}
+
+Cada empresa $j$ tiene una productividad $z_j$ y paga un salario $w_j$, con la restricción fundamental $w_j < z_j$ (el salario debe ser menor que la productividad para que la empresa tenga beneficios positivos).
+
+La demanda de trabajo de cada empresa se deriva del modelo keynesiano:
+\begin{equation}
+L_j^d = \frac{G_a / n}{z_j - w_j}
+\end{equation}
+donde $G_a$ es el gasto público autónomo total y $n$ es el número de empresas.
+
+Esta ecuación captura la esencia del mecanismo keynesiano: mayor gasto público ($G_a$) genera mayor demanda de bienes, que a su vez requiere más trabajo para ser satisfecha.
 
 \subsection{Arquitectura del Modelo ABM}
 
-La implementación se realizó utilizando la librería Mesa 3.x de Python, un framework especializado en modelización basada en agentes \cite{kazil2020mesa, mesa2024}. El modelo consta de tres tipos de agentes:
+El modelo, implementado en Python utilizando Mesa 3.x \cite{kazil2020mesa, mesa2024}, consta de tres tipos de agentes:
 
-\subsubsection{Agente 1: Administración Pública}
+\subsubsection{Administración Pública (AdminPublica)}
 
-Representa al Estado y controla las variables de política macroeconómica:
+Un agente único que representa al Estado y controla tres variables de política:
 \begin{itemize}
-    \item $G_a$: Gasto público autónomo (calibrado: 74,092,715 euros)
-    \item $t$: Tipo impositivo (presión fiscal efectiva: 30\%)
-    \item $j$: Jornada laboral anual (1,700 horas según OCDE)
+    \item \textbf{Gasto público autónomo ($G_a$)}: Determina la demanda agregada. Calibrado en 74,092,715 €.
+    \item \textbf{Tipo impositivo ($t$)}: Presión fiscal sobre los salarios. Calibrado en 30\% \cite{agenciatributaria2024}.
+    \item \textbf{Jornada laboral ($j$)}: Horas anuales de trabajo. Calibrado en 1,700 horas.
 \end{itemize}
 
-\subsubsection{Agente 2: Empresa}
+\subsubsection{Empresa (50 agentes)}
 
-Cada empresa $i$ se caracteriza por:
+Cada empresa se caracteriza por parámetros extraídos de distribuciones normales:
 \begin{itemize}
-    \item Productividad ($z_i$): Extraída de una distribución normal $z_i \sim N(68.0, 5.0)$ euros/hora, basada en datos de Eurostat \cite{eurostatProd2024}
-    \item Salario ($w_i$): Determinado estocásticamente $w_i \sim N(17.5, 2.0)$ euros/hora, según datos del INE \cite{ineSalario2024}, con la restricción $w_i < z_i$
-    \item Demanda de trabajo: Calculada según la ecuación de Anisi:
-    \begin{equation}
-    L_i^d = \frac{G_a / n}{z_i - w_i}
-    \end{equation}
-    donde $n$ es el número de empresas
+    \item Productividad: $z \sim N(68.0, 5.0)$ €/hora \cite{eurostatProd2024}
+    \item Salario: $w \sim N(17.5, 2.0)$ €/hora, con restricción $w < z$ \cite{ineSalario2024}
 \end{itemize}
 
-\subsubsection{Agente 3: Trabajador/Hogar}
+La heterogeneidad en productividad y salarios genera una distribución realista de márgenes empresariales.
 
-Cada trabajador $j$ posee:
+\subsubsection{Trabajador (1,000 agentes)}
+
+Cada trabajador tiene características individuales:
 \begin{itemize}
-    \item Productividad doméstica ($z_b^j$): Calibrada como $z_b \sim N(5.57, 2.0)$ euros/hora
-    \item Deseo de consumo ($c^j$): Calibrado como $c \sim N(5.63, 0.05)$ euros/hora
-    \item Tecnología de consumo ($x^j$, $l^j$): Parámetros que determinan el tiempo necesario para consumir
+    \item Productividad doméstica: $z_b \sim N(5.57, 2.0)$ €/hora
+    \item Deseo de consumo: $c \sim N(5.63, 0.05)$ €/hora
+    \item Tecnología de consumo: $x \sim U(15.0, 25.0)$
+    \item Intensidad del disfrute: $l \sim U(0.8, 1.2)$
 \end{itemize}
 
-El comportamiento del trabajador sigue la siguiente secuencia:
-\begin{enumerate}
-    \item Recibe ingresos del mercado laboral (si está empleado): $Y = w \cdot j \cdot (1-t)$
-    \item Calcula su consumo deseado: $C_d = c \cdot T$, donde $T = 4{,}800$ horas anuales disponibles
-    \item Determina su oferta nocional de trabajo: $L^s = C_d / w$
-    \item Compensa el déficit de consumo con trabajo doméstico: $L_b = \max(0, (C_d - Y) / z_b)$
-\end{enumerate}
+El tiempo potencial de trabajo se calcula como:
+\begin{equation}
+L_w^p = T \cdot \left(1 - c \cdot \frac{l}{x}\right)
+\end{equation}
 
+\subsection{Dinámica del Modelo con Ciclos Económicos}
 
-\subsection{Dinámica del Mercado Laboral con Ciclos Económicos}
-
-Una innovación clave de nuestra implementación es la incorporación de \textbf{shocks económicos controlados} que simulan ciclos económicos realistas. En cada paso de simulación:
+En cada paso de simulación, el modelo aplica shocks estocásticos controlados para generar ciclos económicos realistas:
 
 \begin{enumerate}
-    \item \textbf{Shock al Gasto Público}: El gasto público oscila $\pm 5\%$ alrededor del valor base configurado:
-    \begin{equation}
-    G_a(t) = G_a^{base} \cdot \epsilon_{G}, \quad \epsilon_{G} \sim N(1.0, 0.05)
-    \end{equation}
-    
-    \item \textbf{Shocks de Productividad}: Cada empresa experimenta fluctuaciones tecnológicas:
-    \begin{equation}
-    z_i(t) = z_i^{base} \cdot \epsilon_{z}, \quad \epsilon_{z} \sim N(1.0, 0.03)
-    \end{equation}
-    
-    \item \textbf{Ajustes Salariales}: Los salarios fluctúan de forma más rígida:
-    \begin{equation}
-    w_i(t) = w_i^{base} \cdot \epsilon_{w}, \quad \epsilon_{w} \sim N(1.0, 0.02)
-    \end{equation}
-    
-    \item \textbf{Asignación Laboral}: Los trabajadores se asignan aleatoriamente a las vacantes, capturando las fricciones del mercado laboral.
-    
-    \item \textbf{Agregación de Índices}: Se calculan $I_1$, $I_2$, $I_3$ y la tasa de paro.
+    \item \textbf{Shock al gasto público}: $G_a(t) = G_a^{base} \cdot \epsilon_{G_a}$, donde $\epsilon_{G_a} \sim N(1.0, 0.05)$
+    \item \textbf{Shock a productividad}: $z_j(t) = z_j^{base} \cdot \epsilon_z$, donde $\epsilon_z \sim N(1.0, 0.03)$
+    \item \textbf{Shock a salarios}: $w_j(t) = w_j^{base} \cdot \epsilon_w$, donde $\epsilon_w \sim N(1.0, 0.02)$
 \end{enumerate}
 
-Este diseño garantiza un \textbf{comportamiento keynesiano}: incrementos del gasto público ($G_a$) aumentan la demanda agregada de trabajo, reduciendo el desempleo; reducciones del gasto público incrementan el paro.
+\textbf{Característica crucial}: Los shocks oscilan alrededor del valor \textbf{base}, no del valor anterior. Esto evita la deriva acumulativa y permite que el modelo fluctúe de manera realista alrededor del equilibrio calibrado.
 
+La asignación laboral sigue un proceso de matching aleatorio: los trabajadores se ordenan aleatoriamente y se asignan secuencialmente a las vacantes disponibles.
 
-\subsection{Calibración para España 2024}
+\subsection{Proceso de Calibración Monte Carlo}
 
-La calibración se realizó mediante \textbf{optimización Monte Carlo} con 2,000 iteraciones, buscando minimizar el error ponderado entre los valores simulados y los targets de España 2024:
+La calibración busca los parámetros $\{G_a, c, z_b\}$ que minimizan la discrepancia con los datos empíricos de España 2024. Se utiliza optimización Monte Carlo con 2,000 iteraciones.
 
+\subsubsection{Targets de Calibración}
+
+\begin{itemize}
+    \item \textbf{Tasa de paro}: 11.4\% (INE, EPA 2024) \cite{ineEPA2024}
+    \item \textbf{Índice $I_3$}: 1.10 (frustración moderada, según teoría de Anisi)
+\end{itemize}
+
+\subsubsection{Función Objetivo}
+
+El error ponderado se calcula como:
 \begin{equation}
 \text{Error} = 500 \cdot |\text{Paro}_{sim} - 0.114| + 100 \cdot |I_3^{sim} - 1.10|
 \end{equation}
 
-Los targets utilizados fueron:
-\begin{itemize}
-    \item Tasa de paro: 11.4\% (INE, EPA 2024) \cite{ineEPA2024}
-    \item Índice $I_3$: 1.10 (frustración moderada según teoría de Anisi)
-\end{itemize}
+Los pesos (500 y 100) reflejan la mayor importancia relativa de replicar la tasa de paro.
 
-La validación se realizó con 50 simulaciones independientes para evaluar la robustez estadística de los resultados.
+\subsubsection{Rangos de Búsqueda}
 
 \begin{table}[h]
 \centering
-\caption{Parámetros calibrados para España 2024 (Error Global: 3.64\%)}
+\caption{Rangos de búsqueda para calibración Monte Carlo}
 \begin{tabular}{lccc}
 \toprule
-\textbf{Parámetro} & \textbf{Símbolo} & \textbf{Valor Óptimo} & \textbf{Fuente} \\
+\textbf{Parámetro} & \textbf{Mínimo} & \textbf{Máximo} & \textbf{Óptimo} \\
 \midrule
-Gasto público autónomo & $G_a$ & 74,092,715 € & Calibración MC \\
-Presión fiscal & $t$ & 30\% & Agencia Tributaria \cite{agenciatributaria2024} \\
-Jornada anual & $j$ & 1,700 h & OCDE \\
-Productividad media & $z$ & 68.0 €/h & Eurostat \cite{eurostatProd2024} \\
-Salario medio & $w$ & 17.5 €/h & INE \cite{ineSalario2024} \\
-Productividad doméstica & $z_b$ & 5.57 €/h & Calibración MC \\
-Consumo deseado & $c$ & 5.63 €/h & Calibración MC \\
-Población trabajadora & $N$ & 1,000 agentes & Escala del modelo \\
-Número de empresas & $n$ & 50 agentes & Escala del modelo \\
+$G_a$ (€) & 65,000,000 & 85,000,000 & 74,092,715 \\
+$c$ (€/h) & 5.0 & 7.5 & 5.6290 \\
+$z_b$ (€/h) & 5.0 & 14.0 & 5.57 \\
 \bottomrule
 \end{tabular}
-\label{tab:calibration}
 \end{table}
 
+\subsection{Validación de Robustez}
+
+Tras encontrar los parámetros óptimos, se ejecutan 50 simulaciones independientes para verificar la estabilidad de los resultados y calcular intervalos de confianza.
 
 \subsection{Visualización Web Interactiva}
 
-Se desarrolló una interfaz web interactiva utilizando \texttt{mesa-viz-tornado} que permite:
-
+Se desarrolló una interfaz web utilizando \texttt{mesa-viz-tornado} que permite:
 \begin{itemize}
-    \item \textbf{Gráficas dinámicas en tiempo real}: Evolución de tasa de paro, empleo normalizado, índices $I_1$, $I_2$, $I_3$ y salario promedio.
-    
-    \item \textbf{Control interactivo de parámetros}:
-    \begin{itemize}
-        \item Gasto público ($G_a$): 0 - 150,000,000 € (permite simular desde colapso económico hasta pleno empleo)
-        \item Tipo impositivo ($t$): 10\% - 50\%
-        \item Productividad y salarios medios
-        \item Población de agentes
-    \end{itemize}
-    
-    \item \textbf{Comportamiento keynesiano observable}:
-    \begin{itemize}
-        \item $G_a = 0$ $\rightarrow$ Paro 100\% (colapso económico)
-        \item $G_a = 75M$ $\rightarrow$ Paro $\sim$12\% (España actual)
-        \item $G_a = 150M$ $\rightarrow$ Paro $\sim$0\% (pleno empleo)
-    \end{itemize}
+    \item Visualización en tiempo real de tasa de paro, empleo e índices $I_1$, $I_2$, $I_3$
+    \item Modificación interactiva de parámetros mediante sliders
+    \item Ejecución paso a paso o continua de la simulación
 \end{itemize}
 
-La aplicación se ejecuta localmente mediante \texttt{python run\_web.py} y se accede en \texttt{http://localhost:8521/}.
+\begin{table}[h]
+\centering
+\caption{Parámetros calibrados para España 2024}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Parámetro} & \textbf{Símbolo} & \textbf{Valor} & \textbf{Fuente} \\
+\midrule
+Gasto público & $G_a$ & 74,092,715 € & Monte Carlo \\
+Presión fiscal & $t$ & 30\% & Ag. Tributaria \\
+Jornada anual & $j$ & 1,700 h & OCDE \\
+Productividad & $z$ & 68.0 €/h & Eurostat \\
+Salario medio & $w$ & 17.5 €/h & INE \\
+Prod. doméstica & $z_b$ & 5.57 €/h & Monte Carlo \\
+Consumo & $c$ & 5.63 €/h & Monte Carlo \\
+Trabajadores & $N$ & 1,000 & Modelo \\
+Empresas & $n$ & 50 & Modelo \\
+Tiempo total & $T$ & 4,800 h & Anisi \\
+\bottomrule
+\end{tabular}
+\end{table}

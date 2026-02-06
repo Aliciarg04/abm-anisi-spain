@@ -1,191 +1,150 @@
-\section{Apéndice A: Código Fuente}
+\section{Apéndice A: Código Fuente Principal}
 
-El modelo ABM está implementado en Python utilizando la librería Mesa 3.x. A continuación se presenta el código principal de los agentes y el modelo.
-
-\subsection{Clase AdminPublica}
-
-\begin{verbatim}
-class AdminPublica(mesa.Agent):
-    """
-    Representa al Estado.
-    Fija las reglas del juego macroeconómico.
-    """
-    def __init__(self, unique_id, model, G_a, t, j):
-        super().__init__(model)
-        self.unique_id = unique_id
-        self.G_a = G_a  # Gasto Público Autónomo (€)
-        self.t = t      # Tipo Impositivo (30%)
-        self.j = j      # Jornada Anual (1700 horas)
-
-    def step(self):
-        pass
-\end{verbatim}
-
-
-\subsection{Clase Empresa}
-
-\begin{verbatim}
-class Empresa(mesa.Agent):
-    """
-    Produce bienes y contrata trabajadores.
-    Productividad z ~ N(68.0, 5.0) €/hora
-    Salario w ~ N(17.5, 2.0) €/hora
-    """
-    def __init__(self, unique_id, model, 
-                 z_media, z_std, w_media, w_std):
-        super().__init__(model)
-        self.unique_id = unique_id
-        
-        # Productividad y Salario
-        self.z = np.random.normal(z_media, z_std)
-        w_provisional = np.random.normal(w_media, w_std)
-        # Restricción: w < z (beneficio positivo)
-        self.w = max(1.0, min(w_provisional, self.z - 1.0))
-        
-        self.trabajadores_contratados = 0
-        self.demanda_trabajo = 0
-
-    def calcular_demanda(self, G_a_total, num_empresas):
-        """
-        Demanda de trabajo según ecuación de Anisi:
-        L_d = (G_a / n) / (z - w)
-        """
-        G_a_individual = G_a_total / num_empresas
-        if self.z > self.w:
-            self.demanda_trabajo = G_a_individual / (self.z - self.w)
-        else:
-            self.demanda_trabajo = 0
-
-    def step(self):
-        pass
-\end{verbatim}
-
+El modelo ABM está implementado en Python 3.10+ utilizando la librería Mesa 3.x. A continuación se presenta el código principal con comentarios explicativos.
 
 \subsection{Clase Trabajador}
 
+La clase \texttt{Trabajador} es el agente más complejo, implementando las decisiones de asignación de tiempo entre trabajo de mercado y doméstico.
+
 \begin{verbatim}
 class Trabajador(mesa.Agent):
-    """
-    Ofrece trabajo de mercado y doméstico.
-    z_b ~ N(5.57, 2.0) €/hora (calibrado)
-    c ~ N(5.63, 0.05) €/hora (calibrado)
-    """
-    def __init__(self, unique_id, model, 
-                 zb_media, zb_std, c_media, c_std):
+    """Ofrece trabajo de mercado y doméstico para satisfacer consumo."""
+    
+    def __init__(self, unique_id, model, zb_media, zb_std, c_media, c_std):
         super().__init__(model)
         self.unique_id = unique_id
-        self.empleador = None
+        self.empleador = None          # None = desempleado
         self.salario_percibido = 0
-        self.horas_mercado = 0
-        self.L_s = 0
+        self.horas_mercado = 0 
+        self.L_s = 0                    # Oferta nocional
         
-        # Parámetros estocásticos
-        self.z_b = max(0.1, np.random.normal(zb_media, zb_std))
-        self.c = max(0.1, np.random.normal(c_media, c_std))
+        # Parámetros estocásticos del trabajador
+        self.z_b = max(0.1, np.random.normal(zb_media, zb_std))  # Prod. doméstica
+        self.c = max(0.1, np.random.normal(c_media, c_std))      # Consumo
+        self.x = np.random.uniform(15.0, 25.0)   # Tecnología consumo
+        self.l = np.random.uniform(0.8, 1.2)     # Intensidad disfrute
         
-        # Tecnología de consumo (Anisi)
-        self.x = np.random.uniform(15.0, 25.0)
-        self.l = np.random.uniform(0.8, 1.2)
-        
+        # Variables calculadas
         self.L_b = 0          # Trabajo doméstico
         self.L_w_total = 0    # Trabajo total
         self.L_wp = 0         # Tiempo potencial
 
     def step(self):
-        # 1. Ingresos de Mercado
+        # 1. INGRESOS DE MERCADO
         if self.empleador is not None:
-            w_real = self.empleador.w
+            w_real_mercado = self.empleador.w
             self.horas_mercado = self.model.admin_publica.j
         else:
-            w_real = 0
+            w_real_mercado = 0
             self.horas_mercado = 0
         
-        renta_bruta = w_real * self.horas_mercado
-        C_mercado = renta_bruta * (1 - self.model.admin_publica.t)
-        self.salario_percibido = C_mercado
+        # Renta neta después de impuestos
+        renta_bruta = w_real_mercado * self.horas_mercado
+        C_proporcionado_mercado = renta_bruta * (1 - self.model.admin_publica.t)
+        self.salario_percibido = C_proporcionado_mercado
+            
+        # 2. CONSUMO DESEADO
+        C_deseado_total = self.c * self.model.T_i_total
         
-        # 2. Consumo deseado
-        C_deseado = self.c * self.model.T_i_total
+        # 3. OFERTA NOCIONAL DE TRABAJO
+        w_referencia = w_real_mercado if w_real_mercado > 0 else self.model.w_promedio
+        self.L_s = C_deseado_total / w_referencia if w_referencia > 0 else 0
         
-        # 3. Oferta nocional (L^s)
-        w_ref = w_real if w_real > 0 else self.model.w_promedio
-        self.L_s = C_deseado / w_ref if w_ref > 0 else 0
-        
-        # 4. Trabajo doméstico compensatorio
-        deficit = C_deseado - C_mercado
+        # 4. TRABAJO DOMÉSTICO COMPENSATORIO
+        deficit = C_deseado_total - C_proporcionado_mercado
         self.L_b = deficit / self.z_b if deficit > 0 else 0
-        
-        # 5. Tiempos totales (Anisi)
+            
+        # 5. TIEMPOS TOTALES
         self.L_w_total = self.horas_mercado + self.L_b
         tiempo_consumo = self.c * (self.l / self.x)
         self.L_wp = max(0, self.model.T_i_total * (1 - tiempo_consumo))
 \end{verbatim}
 
+\subsection{Método step() del Modelo Principal}
 
-\subsection{Modelo Principal con Ciclos Económicos}
+El método \texttt{step()} orquesta cada paso de simulación, aplicando shocks y calculando métricas agregadas.
 
 \begin{verbatim}
-class ModeloAnisi(mesa.Model):
-    """
-    Modelo ABM calibrado para España 2024.
-    Incluye shocks económicos controlados.
+def step(self):
+    # 1. SHOCKS ECONÓMICOS (oscilan alrededor del valor BASE)
+    # CLAVE: Los shocks oscilan sobre el BASE, no sobre el valor previo
+    shock_ga = np.random.normal(1.0, 0.05)
+    self.admin_publica.G_a = self.G_a_base * shock_ga
     
-    Comportamiento Keynesiano:
-    - G_a ALTO → Más demanda → Más empleo → MENOS paro
-    - G_a BAJO → Menos demanda → Menos empleo → MÁS paro
-    """
-    def __init__(self, 
-                 G_a=74092715,    # Calibrado
-                 t=0.30,          # 30% presión fiscal
-                 j=1700.0,        # Jornada anual
-                 z_media=68.0, z_std=5.0,
-                 w_media=17.5, w_std=2.0,
-                 zb_media=5.57, zb_std=2.0,  # Calibrado
-                 c_media=5.6290, c_std=0.05, # Calibrado
-                 N_trabajadores=1000, N_empresas=50,
-                 T_i_total=4800.0):
-        super().__init__()
-        self.T_i_total = T_i_total
-        self.N = N_trabajadores
+    # Shocks a productividad y salarios de cada empresa
+    for i, empresa in enumerate(self.empresas):
+        shock_z = np.random.normal(1.0, 0.03)
+        empresa.z = self.z_base_empresas[i] * shock_z
         
-        # Guardar valores BASE (del slider)
-        self.G_a_base = G_a
-        self.z_base_empresas = []
-        self.w_base_empresas = []
+        shock_w = np.random.normal(1.0, 0.02)
+        empresa.w = max(5.0, min(self.w_base_empresas[i] * shock_w, 
+                                  empresa.z - 1))
+    
+    self.w_promedio = np.mean([e.w for e in self.empresas])
+
+    # 2. ASIGNACIÓN LABORAL (Matching)
+    for t in self.trabajadores: 
+        t.empleador = None
         
-        # Crear agentes...
+    disponibles = list(self.trabajadores)
+    self.random.shuffle(disponibles)
+    indice = 0
+    self.empleo_total = 0
+    
+    for empresa in self.empresas:
+        empresa.calcular_demanda(self.admin_publica.G_a, len(self.empresas))
+        vacantes = int(round(empresa.demanda_trabajo / self.admin_publica.j))
+        contratados = 0
         
-    def step(self):
-        # 1. SHOCK AL GASTO PÚBLICO (±5% del base)
-        shock_ga = np.random.normal(1.0, 0.05)
-        self.admin_publica.G_a = self.G_a_base * shock_ga
-        
-        # 2. SHOCKS A PRODUCTIVIDAD (±3%) Y SALARIOS (±2%)
-        for i, empresa in enumerate(self.empresas):
-            shock_z = np.random.normal(1.0, 0.03)
-            empresa.z = self.z_base_empresas[i] * shock_z
-            shock_w = np.random.normal(1.0, 0.02)
-            empresa.w = max(5.0, min(
-                self.w_base_empresas[i] * shock_w, 
-                empresa.z - 1))
-        
-        # 3. Asignación laboral y cálculo de índices...
+        while contratados < vacantes and indice < len(disponibles):
+            trabajador = disponibles[indice]
+            trabajador.empleador = empresa
+            indice += 1
+            contratados += 1
+            
+        empresa.trabajadores_contratados = contratados
+        self.empleo_total += contratados
+
+    # 3. EJECUCIÓN DE AGENTES
+    for trabajador in self.trabajadores:
+        trabajador.step()
+    
+    # 4. CÁLCULO DE MÉTRICAS MACRO
+    L_mercado = sum([t.horas_mercado for t in self.trabajadores])
+    L_b = sum([t.L_b for t in self.trabajadores])
+    L_w = L_mercado + L_b
+    L_s = sum([t.L_s for t in self.trabajadores if t.L_s != float('inf')])
+    L_wp = sum([t.L_wp for t in self.trabajadores])
+    
+    self.tasa_paro = 1.0 - (self.empleo_total / self.N)
+    self.I1_colocacion = L_mercado / L_s if L_s > 0 else 0
+    self.I2_dualismo = L_mercado / L_w if L_w > 0 else 0
+    self.I3_agregado = L_w / L_wp if L_wp > 0 else float('inf')
+    
+    self.datacollector.collect(self)
 \end{verbatim}
 
 
 \section{Apéndice B: Instrucciones de Uso}
 
-\subsection{Requisitos}
+\subsection{Requisitos del Sistema}
 
 \begin{itemize}
-    \item Python 3.10 o superior
-    \item Librerías: \texttt{mesa>=3.0}, \texttt{numpy}, \texttt{mesa-viz-tornado}
+    \item Sistema operativo: Windows 10/11, macOS 10.15+, o Linux
+    \item Python: Versión 3.10 o superior
+    \item Memoria RAM: Mínimo 4GB (recomendado 8GB)
 \end{itemize}
 
 \subsection{Instalación}
 
 \begin{verbatim}
-pip install mesa numpy mesa-viz-tornado
+# 1. Crear y activar entorno virtual
+python -m venv venv
+venv\Scripts\activate       # Windows
+source venv/bin/activate    # macOS/Linux
+
+# 2. Instalar dependencias
+pip install mesa numpy mesa-viz-tornado pandas
 \end{verbatim}
 
 \subsection{Ejecución de la Calibración}
@@ -195,70 +154,160 @@ cd Seminario
 python calibracion_definitiva.py
 \end{verbatim}
 
-Ejecuta 2,000 iteraciones Monte Carlo y muestra los parámetros óptimos.
+La salida mostrará el progreso de las 2,000 iteraciones Monte Carlo y los parámetros óptimos encontrados.
 
 \subsection{Ejecución de la Visualización Web}
 
 \begin{verbatim}
-cd Seminario
 python run_web.py
 \end{verbatim}
 
-Abrir navegador en: \texttt{http://localhost:8521/}
+Abrir navegador en: \url{http://localhost:8521/}
 
-\subsection{Controles de la Interfaz}
+\subsection{Controles de la Interfaz Web}
+
+\begin{table}[h]
+\centering
+\caption{Controles de la interfaz de visualización}
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{Control} & \textbf{Descripción} \\
+\midrule
+Reset & Reinicia la simulación con los parámetros actuales de los sliders. \textbf{Obligatorio} tras modificar cualquier slider. \\
+Start/Stop & Inicia o detiene la simulación en modo continuo. \\
+Step & Avanza exactamente un paso de simulación. \\
+Sliders & Modifican $G_a$, $t$, $j$, $z$, $w$, $z_b$, $c$, $N$, $n$, $T$. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Solución de Problemas Comunes}
 
 \begin{itemize}
-    \item \textbf{Sliders}: Modificar parámetros (G\_a desde 0 hasta 150M €)
-    \item \textbf{Reset}: Reiniciar con nuevos parámetros (OBLIGATORIO tras cambiar sliders)
-    \item \textbf{Start}: Inicia simulación continua
-    \item \textbf{Step}: Avanza un período
+    \item \textbf{ModuleNotFoundError}: Ejecutar \texttt{pip install mesa numpy mesa-viz-tornado}
+    \item \textbf{Puerto en uso}: Cambiar \texttt{server.port} en \texttt{run\_web.py}
+    \item \textbf{Gráficos no actualizan}: Pulsar ``Reset'' antes de ``Start''; refrescar página
 \end{itemize}
 
 
-\section{Apéndice C: Parámetros del Modelo}
+\section{Apéndice C: Resultados Completos de Calibración}
 
 \begin{table}[h]
 \centering
-\caption{Descripción completa de los parámetros calibrados}
-\begin{tabular}{lp{4cm}ccc}
-\toprule
-\textbf{Símbolo} & \textbf{Descripción} & \textbf{Rango Slider} & \textbf{Valor Calibrado} & \textbf{Fuente} \\
-\midrule
-$G_a$ & Gasto público autónomo & 0 - 150M € & 74,092,715 € & Monte Carlo \\
-$t$ & Tipo impositivo & 0.10 - 0.50 & 0.30 & Ag. Tributaria \\
-$j$ & Jornada anual & 1000 - 2200 h & 1,700 h & OCDE \\
-$z$ & Productividad media & 40 - 120 €/h & 68.0 €/h & Eurostat \\
-$w$ & Salario medio & 10 - 35 €/h & 17.5 €/h & INE \\
-$z_b$ & Productividad doméstica & 3 - 15 €/h & 5.57 €/h & Monte Carlo \\
-$c$ & Consumo deseado & 3 - 10 €/h & 5.63 €/h & Monte Carlo \\
-$N$ & Número trabajadores & 100 - 2000 & 1,000 & Escala \\
-$n$ & Número empresas & 10 - 200 & 50 & Escala \\
-$T$ & Tiempo total disponible & 2000 - 6000 h & 4,800 h & Anisi \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-
-\section{Apéndice D: Resultados de Calibración}
-
-\begin{table}[h]
-\centering
-\caption{Resumen de resultados de calibración Monte Carlo (2000 iteraciones)}
+\caption{Resumen completo de la calibracion Monte Carlo}
 \begin{tabular}{lc}
 \toprule
-\textbf{Métrica} & \textbf{Valor} \\
+\textbf{Metrica} & \textbf{Valor} \\
 \midrule
-Iteraciones totales & 2,000 \\
-Tiempo de ejecución & $\sim$25 segundos \\
+\multicolumn{2}{l}{\textit{Configuracion}} \\
+Iteraciones Monte Carlo & 2,000 \\
+Simulaciones de validacion & 50 \\
+Tiempo de ejecucion & 25 segundos \\
+\midrule
+\multicolumn{2}{l}{\textit{Parametros Optimos}} \\
+Gasto publico autonomo & 74,092,715 EUR \\
+Deseo de consumo & 5.6290 EUR/h \\
+Productividad domestica & 5.57 EUR/h \\
+\midrule
+\multicolumn{2}{l}{\textit{Errores de Calibracion}} \\
 Error Tasa de Paro & 4.95\% \\
-Error Índice $I_3$ & 2.66\% \\
-\textbf{Error Global} & \textbf{3.64\%} \\
-Validaciones realizadas & 50 \\
+Error Indice I3 & 2.66\% \\
+Error Global & 3.64\% \\
 \midrule
-$G_a$ óptimo & 74,092,715 € \\
-$c$ óptimo & 5.6290 €/h \\
-$z_b$ óptimo & 5.57 €/h \\
+\multicolumn{2}{l}{\textit{Metricas Simuladas (Media de 50 sim.)}} \\
+Tasa de Paro & 11.96\% (target: 11.4\%) \\
+Indice I1 & 0.959 (target: 1.0) \\
+Indice I2 & 0.411 (target: 0.6) \\
+Indice I3 & 1.071 (target: 1.10) \\
+\midrule
+\multicolumn{2}{l}{\textit{Analisis Estructural}} \\
+PIB Oculto (trabajo domestico) & 11.54\% \\
+Horas domesticas totales & 2,434,518 h \\
+Valor produccion domestica & 13,572,069 EUR \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Distribución de Parámetros por Empresa}
+
+\begin{table}[h]
+\centering
+\caption{Estadísticas de productividad y salarios (50 empresas)}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Variable} & \textbf{Media} & \textbf{Std} & \textbf{Min} & \textbf{Max} & \textbf{Mediana} \\
+\midrule
+Productividad $z$ (€/h) & 68.1 & 4.8 & 55.3 & 81.2 & 68.0 \\
+Salario $w$ (€/h) & 17.4 & 1.9 & 12.1 & 22.0 & 17.5 \\
+Margen $z-w$ (€/h) & 50.7 & 5.2 & 38.2 & 64.0 & 50.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Distribución de Parámetros por Trabajador}
+
+\begin{table}[h]
+\centering
+\caption{Estadísticas de parámetros de trabajadores (1,000 agentes)}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Variable} & \textbf{Media} & \textbf{Std} & \textbf{Min} & \textbf{Max} & \textbf{Mediana} \\
+\midrule
+Prod. doméstica $z_b$ (€/h) & 5.56 & 1.98 & 0.1 & 12.3 & 5.5 \\
+Consumo $c$ (€/h) & 5.63 & 0.05 & 5.50 & 5.76 & 5.63 \\
+Tecnología $x$ & 20.1 & 2.9 & 15.0 & 25.0 & 20.0 \\
+Intensidad $l$ & 1.0 & 0.12 & 0.8 & 1.2 & 1.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\section{Apéndice D: Explicación del Comportamiento del Modelo}
+
+Esta sección explica en detalle cómo funciona el modelo y por qué produce los resultados observados, sin recurrir a formalizaciones matemáticas adicionales.
+
+\subsection{Cómo se Determina el Empleo en el Modelo}
+
+El empleo en el modelo surge de la interacción entre el gasto público y las decisiones de las empresas. Cuando el gobierno aumenta el gasto público, las empresas reciben más demanda de bienes y servicios. Para satisfacer esta demanda, necesitan contratar más trabajadores.
+
+Cada empresa calcula cuántos trabajadores necesita en función de tres factores: el gasto público que le corresponde (repartido entre todas las empresas), su productividad (cuánto produce cada trabajador por hora) y el salario que paga. Empresas con alta productividad y salarios moderados pueden contratar más trabajadores con el mismo nivel de gasto.
+
+El proceso de contratación es aleatorio: los trabajadores se ordenan al azar y se van asignando a las vacantes disponibles hasta que se agotan. Esto genera variabilidad realista entre simulaciones, similar a la que observamos en mercados laborales reales donde el acceso al empleo tiene un componente de suerte.
+
+\subsection{Por Qué Funciona el Mecanismo Keynesiano}
+
+El modelo exhibe un comportamiento keynesiano claro: más gasto público genera más empleo. Esto ocurre porque el gasto público representa demanda efectiva que las empresas deben satisfacer. A diferencia de modelos neoclásicos donde el empleo depende solo de la oferta de trabajo, aquí el empleo está determinado por la demanda.
+
+Este mecanismo explica por qué en situaciones de crisis (bajo gasto público) el desempleo puede ser muy alto aunque haya muchos trabajadores dispuestos a trabajar. No es que los trabajadores no quieran trabajar o pidan salarios muy altos; simplemente no hay suficiente demanda para generar los puestos de trabajo necesarios.
+
+La relación entre gasto y empleo no es perfectamente lineal. En situaciones de crisis muy profunda (gasto muy bajo), pequeños aumentos del gasto tienen grandes efectos sobre el empleo. Cerca del pleno empleo, los efectos son menores porque ya quedan pocos trabajadores disponibles para contratar.
+
+\subsection{El Papel del Trabajo Doméstico}
+
+El trabajo doméstico actúa como mecanismo compensatorio en el modelo. Cuando un trabajador está desempleado o su salario es insuficiente para satisfacer sus necesidades de consumo, compensa esta carencia produciendo bienes y servicios en el hogar.
+
+Esta compensación tiene límites. El trabajo doméstico es menos productivo que el trabajo de mercado, por lo que los desempleados deben dedicar muchas horas a tareas del hogar para compensar la falta de ingresos. Esto explica por qué el índice $I_3$ (frustración) puede superar la unidad: los individuos acaban trabajando más tiempo del que idealmente dispondrían, simplemente para mantener su nivel de consumo.
+
+El trabajo doméstico también explica la discrepancia en el índice $I_2$. El modelo predice más trabajo doméstico del esperado porque los desempleados (y los trabajadores con salarios bajos) compensan intensamente su déficit de consumo. Esto refleja una realidad económica: muchas familias dependen de la producción doméstica para mantener su nivel de vida.
+
+\subsection{Interpretación de los Ciclos Económicos}
+
+El modelo incluye shocks estocásticos que simulan fluctuaciones económicas. Estos shocks afectan al gasto público, la productividad de las empresas y los salarios. Sin embargo, están diseñados para oscilar alrededor de valores base, no para acumularse en una dirección.
+
+Esto significa que el modelo fluctúa alrededor de un equilibrio sin alejarse sistemáticamente de él. Si el gasto cae un 5\% en un periodo, es probable que vuelva a subir en periodos siguientes. Este diseño refleja que las economías tienen ciclos pero tienden a regresar a niveles de actividad normales con el tiempo.
+
+La variabilidad observada entre simulaciones (por ejemplo, la desviación estándar del 2.94\% en la tasa de paro) refleja esta naturaleza cíclica. Algunas simulaciones capturan periodos de expansión y otras de recesión, pero en promedio reproducen los valores calibrados.
+
+\subsection{Por Qué el Modelo Replica los Datos Españoles}
+
+El modelo replica razonablemente bien la tasa de paro española (error del 4.95\%) y el índice de frustración $I_3$ (error del 2.66\%) porque la calibración Monte Carlo encontró parámetros que equilibran estos objetivos.
+
+El gasto público óptimo (74 millones de euros en la escala del modelo) genera el nivel de demanda necesario para sostener aproximadamente el 88\% del empleo. El deseo de consumo óptimo (5.63 euros/hora) determina cuánto quieren trabajar los individuos, y la productividad doméstica óptima (5.57 euros/hora) determina cuánto trabajo necesitan en el hogar para compensar carencias.
+
+Estos tres parámetros interactúan de forma no trivial. Por ejemplo, si aumentamos el deseo de consumo, los trabajadores querrán trabajar más horas, pero si el gasto público no aumenta proporcionalmente, aumentará el desempleo y la frustración. La calibración encontró la combinación que mejor replica los datos observados.
+
+\subsection{Limitaciones de la Interpretación}
+
+Es importante recordar que el modelo es una simplificación de la realidad. No incluye muchos factores relevantes como la inflación, el comercio exterior, la inversión privada, o las diferencias sectoriales. Los valores absolutos de los parámetros (como el gasto de 74 millones) son escalas del modelo, no cantidades reales del presupuesto español.
+
+Lo que el modelo captura correctamente son las relaciones cualitativas: más gasto genera más empleo, el trabajo doméstico compensa la falta de empleo formal, y los trabajadores experimentan frustración cuando deben trabajar excesivamente para satisfacer sus necesidades. Estas relaciones son las que hacen útil el modelo como herramienta de exploración de políticas.
