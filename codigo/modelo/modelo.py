@@ -129,12 +129,12 @@ class ModeloAnisi(mesa.Model):
             trabajador.step()
         
         # 6. CÁLCULOS MACRO Y AGREGACIÓN DE ÍNDICES
-        self.L_mercado_total = sum([t.horas_mercado for t in self.trabajadores]) 
-        self.L_b_total = sum([t.L_b for t in self.trabajadores])
-        self.L_w_total = L_mercado_total + L_b_total
+        L_mercado_total = sum([t.horas_mercado for t in self.trabajadores]) 
+        L_b_total = sum([t.L_b for t in self.trabajadores])
+        L_w_total = L_mercado_total + L_b_total
         
-        self.L_s_total = sum([t.L_s for t in self.trabajadores if t.L_s != float('inf')])
-        self.L_wp_total = sum([t.L_wp for t in self.trabajadores])
+        L_s_total = sum([t.L_s for t in self.trabajadores if t.L_s != float('inf')])
+        L_wp_total = sum([t.L_wp for t in self.trabajadores])
         
         # Tasa de Paro
         self.tasa_paro = 1.0 - (self.empleo_total / self.N) if self.N > 0 else 0
