@@ -15,8 +15,8 @@ El modelo analiza cómo interactúan tres tipos de agentes: **Administración P�
 SEMINARIO ABM-ANISI-ALICIA...
 ├── codigo/
 │   ├── data/
-│   │   ├── output/          # Archivos de salida procesados
-│   │   └── raw/             # Datos originales sin procesar
+│   │   ├── resultados_finales_anisi.csv         # Los resultados obtenidos en formato csv
+│   │   └── visualizacion_datos_calibrados.png   # Imagen de los datos
 │   ├── modelo/
 │   │   ├── agentes.py       # Definición de los agentes del modelo ABM
 │   │   ├── calibracion.py   # Scripts de calibración del modelo
@@ -24,8 +24,7 @@ SEMINARIO ABM-ANISI-ALICIA...
 │   ├── notebooks/
 │   │   ├── 01_modelo_abm.ipynb
 │   │   ├── 02_datos.ipynb
-│   │   └── 03_calibrado.ipynb
-│   ├── resultados_finales.csv
+│   │   └── 03_modelo_calibrado.ipynb
 │   └── run_web.py           # Script para ejecución en interfaz web
 └── paper/
     ├── content/             # Archivos fuente del texto (.tex, etc.)
@@ -37,7 +36,12 @@ SEMINARIO ABM-ANISI-ALICIA...
 ---
 ## 🚀 Instalación y Ejecución
 ### Requisitos previos
-Es necesario tener instalado Python 3.10+ (preferiblemente a través de Anaconda).
+Es necesario tener instalado Python 3.10+ (preferiblemente a través de Anaconda). 
+
+Para ejecutar es necesario que la carpeta completa del proyecto se abra en vscode studio
+
+Lo mejor es ejecutar con el kernel de python que se tenga instalado e instalar las librerías que se indican a continuación
+
 ### Instalación de librerías
 ```bash
 pip install mesa numpy pandas matplotlib seaborn mesa-viz-tornado scipy
@@ -50,7 +54,12 @@ pip install mesa numpy pandas matplotlib seaborn mesa-viz-tornado scipy
 python codigo/run_web.py
 ```
 4. Accede en tu navegador a: http://localhost:8521/
+   
+---
+## 👁️ Visualización del paper en aplicaciones externas al IDE
+Para poder visualizar el archivo latex en aplicaciones externas a VSCode Studio, como por ejemplo Overleaf, basta con crear un nuevo proyecto y añadir la carpeta "paper" completa. Así será más cómodo ante posibles errores de latex del IDE y problemas de dependencias
 
+---
 ## 📈 Resultados y Conclusiones
 El modelo ha sido validado mediante un análisis de sensibilidad y calibración estadística, logrando replicar los indicadores macroeconómicos de España en 2024 con un margen de error mínimo.
 
@@ -59,6 +68,7 @@ El modelo ha sido validado mediante un análisis de sensibilidad y calibración 
 * Dualismo Laboral: El Índice $I_2$ refleja una dependencia significativa del trabajo extramercado ($L_b$) como colchón social.
 * Tensión Temporal: El Índice $I_3$ muestra un fenómeno de "frustración del consumo" donde el tiempo disponible limita el bienestar potencial.
 
+---
 ## 👥 Autoría y Créditos
 * Desarrollo: Alicia Ruiz Gómez y Gemma Quiles García.
 * Tutoría: José Luis Sáez Lozano.
